@@ -4,7 +4,9 @@ import time
 
 import math
 import textstrs
+from textstrs import *
 from gen_colors import gen_colors
+import game
 # initialise everything and check stuff
 global curses
 global screen
@@ -47,7 +49,7 @@ except ModuleNotFoundError:
           "program from a terminal")
     sys.exit(1)
 
-
+print(textstrs.controlstext)
 term_height = os.get_terminal_size().lines
 term_width = os.get_terminal_size().columns
 curses.start_color()
@@ -60,15 +62,8 @@ curses.noecho()
 curses.init_pair(1, 1, 0)
 curses.init_pair(2, 0, 1)
 
-# for i in range(256):
-#     screen.addstr(i//188, i%188,"A", curses.color_pair(i))
-# screen.refresh()
-
-
-
-for count, i in enumerate(textstrs.retwelcometext().split("\n")):
-    print(i)
-    print(count) 
+# Welcome screen
+for count, i in enumerate(textstrs.welcometext.split("\n")):
     add_str_center(i, -1, round(term_height/2)-4+count, 1)
 
 add_str_center("[Press any key to start]", -1, round(term_height/2)+1, 2)
@@ -77,23 +72,57 @@ screen.getch()
 screen.clear()
 #     screen.addstr(round((term_height/2)-4)+count, round(term_width/2-int(len(i)/2)), i)
 
-for count, i in enumerate(textstrs.retcontrolstext().split("\n")):
+
+# Controls screen
+for count, i in enumerate(textstrs.controlstext.split("\n")):
     add_str_center(i, -1, round(term_height/2)-4+count, 1)
 
 add_str_center("[start]", -1, term_height//2 + 4, 2)
 
-pressedEnter = False
-while not pressedEnter:
+# for checking when enter is pressed on controls screen
+
+while True:
     char = screen.getch()
     if char == 10:
-        pressedEnter = True
-
+        break
     screen.addstr(0, 0, str(char)+"          ")
     screen.refresh()
+
+screen.clear()
+
+for count, i in enumerate(textstrs.quizshowtext.split("\n")):
+    add_str_center(i, -1, round(term_height/2)-12+count, 1)
+    
+
+add_str_center(quizoptions[0], -1, (term_height//2)-6, 2)
+add_str_center(quizoptions[1], -1, (term_height//2)-4, 1)
+add_str_center(quizoptions[2], -1, (term_height//2)-2, 1)
+add_str_center(quizoptions[3], -1, (term_height//2), 1)
+
+sel = 0
+while True:
+    char = screen.getch()
+    if char == 258 and sel != 3:  # down arrow
+        # replace existing with blank
+        add_str_center(quizoptions[sel], -1, (term_height//2)-6+(2*sel), 1) 
+        sel += 1
+        # make new selection highlighted
+        add_str_center(quizoptions[sel], -1, (term_height//2)-6+(2*sel), 2)
+
+    elif char == 259 and sel != 0:  # up arrow
+        add_str_center(quizoptions[sel], -1, (term_height//2)-6+(2*sel), 1)
+        sel -= 1
+        # make new selection highlighted
+        add_str_center(quizoptions[sel], -1, (term_height//2)-6+(2*sel), 2)
+    elif char == 10:
+        break
 
 
 
 gameloop = True
+if sel == 0:
+    game.play_game(curses, screen)
+
 while gameloop:
     screen.addstr(5, 5, f"term height: {term_height}")
     screen.addstr(6, 5, f"term width : {term_width}")

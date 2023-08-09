@@ -6,6 +6,10 @@ welcometext = """
 │                                │
 │    [Press any key to start]    │
 └────────────────────────────────┘
+
+
+This program uses trivia questions downloaded from Open Trivia Database (opentdb.org)
+(All questions have been already downloaded. No requests will be sent to the site)
 """
 
 controlstext = """
@@ -18,9 +22,15 @@ controlstext = """
 │                 [start]                 │
 └─────────────────────────────────────────┘
 """
-def retwelcometext():
-    '''return the welcome box'''
-    return(welcometext)
 
-def retcontrolstext():
-    return(controlstext)
+quizshowtext = '''
+┌─────────────┐
+│ Quiz game :)│
+└─────────────┘
+''' 
+
+quizoptions = ["[      play quiz       ]",
+               "[ Add custom questions ]",
+               "[   view high scores   ]",
+               "[         quit         ]"]
+
