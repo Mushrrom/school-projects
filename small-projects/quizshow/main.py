@@ -1,12 +1,12 @@
 import sys
 import os
 import time
-
-import math
 import textstrs
 from textstrs import *
 from gen_colors import gen_colors
 import game
+import create_question
+import view_hs
 # initialise everything and check stuff
 global curses
 global screen
@@ -60,8 +60,9 @@ curses.noecho()
 
 curses.init_pair(1, 1, 0) # default text
 curses.init_pair(2, 0, 1) # Inverted from default
-curses.init_pair(3, 4, 0) # Red - for lives count and incorrect
-curses.init_pair(4, 5, 0)
+curses.init_pair(3, 4, 0) # Red FG - for lives count and incorrect
+curses.init_pair(4, 5, 0) # grey FG - for dead hearts
+curses.init_pair(5, 6, 0) # green FG - for correct :)
 
 
 # Welcome screen
@@ -81,43 +82,47 @@ for count, i in enumerate(textstrs.controlstext.split("\n")):
 
 add_str_center("[start]", -1, term_height//2 + 3, 2)
 
-# for checking when enter is pressed on controls screen
 
+# this just waits until enter is pressesd - it occurs pretty commonly here
 while True:
-    char = screen.getch()
-    if char == 10:
-        break
-    screen.addstr(0, 0, str(char)+"          ")
-    screen.refresh()
+    if screen.getch() == 10: break
 
-screen.clear()
-
-for count, i in enumerate(textstrs.quizshowtext.split("\n")):
-    add_str_center(i, -1, (term_height//2)-12+count, 1)
-    
-
-add_str_center(quizoptions[0], -1, (term_height//2)-6, 2)
-add_str_center(quizoptions[1], -1, (term_height//2)-4, 1)
-add_str_center(quizoptions[2], -1, (term_height//2)-2, 1)
-add_str_center(quizoptions[3], -1, (term_height//2), 1)
 
 sel = 0
 while True:
-    char = screen.getch()
-    if char == 258 and sel != 3:  # down arrow
-        # replace existing with blank
-        add_str_center(quizoptions[sel], -1, (term_height//2)-6+(2*sel), 1) 
-        sel += 1
-        # make new selection highlighted
-        add_str_center(quizoptions[sel], -1, (term_height//2)-6+(2*sel), 2)
+    screen.clear()
+    for count, i in enumerate(textstrs.quizshowtext.split("\n")):
+        add_str_center(i, -1, (term_height//2)-12+count, 1)
+        sel = 0
+    add_str_center(quizoptions[0], -1, (term_height//2)-6, 2)
+    add_str_center(quizoptions[1], -1, (term_height//2)-4, 1)
+    add_str_center(quizoptions[2], -1, (term_height//2)-2, 1)
+    add_str_center(quizoptions[3], -1, (term_height//2), 1)
+    while True:
+        char = screen.getch()
+        if char == 258 and sel != 3:  # down arrow
+            # replace existing with blank
+            add_str_center(quizoptions[sel], -1, (term_height//2)-6+(2*sel), 1)
+            sel += 1
+            # make new selection highlighted
+            add_str_center(quizoptions[sel], -1, (term_height//2)-6+(2*sel), 2)
 
-    elif char == 259 and sel != 0:  # up arrow
-        add_str_center(quizoptions[sel], -1, (term_height//2)-6+(2*sel), 1)
-        sel -= 1
-        # make new selection highlighted
-        add_str_center(quizoptions[sel], -1, (term_height//2)-6+(2*sel), 2)
-    elif char == 10:
-        break
+        elif char == 259 and sel != 0:  # up arrow
+            add_str_center(quizoptions[sel], -1, (term_height//2)-6+(2*sel), 1)
+            sel -= 1
+            # make new selection highlighted
+            add_str_center(quizoptions[sel], -1, (term_height//2)-6+(2*sel), 2)
+        elif char == 10:
+            break
+    if sel == 0:
+        game.play_game(curses, screen)
+    elif sel == 1: 
+        create_question.create_question(curses, screen, term_height, term_width)
+    elif sel ==2:
+        view_hs.view_hs(screen, curses, term_width, term_height)
+    elif sel == 3:
+        quit(0) 
+
 
 
 
