@@ -12,7 +12,10 @@ def gen_colors(curses):
     colours = ["#230000", # 0: bg
                "#d3af37", # 1: text default
                "#000000", # 2: 
-               "#BADA55"  # 3: test
+               "#BADA55", # 3: test\
+               "#Fa0202", # 4 :red
+               "#c0c0c0", # 5: grey
+               "#00FF00" # 6: GREN
                ]
 
     colours = list(map(hex_to_rgb, colours))
@@ -20,4 +23,4 @@ def gen_colors(curses):
         curses.init_color(count, i[0], i[1], i[2])
 
 
-print(hex_to_rgb("#FA7A55"))
+

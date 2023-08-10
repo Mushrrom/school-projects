@@ -27,8 +27,23 @@ quizshowtext = '''
 ┌─────────────┐
 │ Quiz game :)│
 └─────────────┘
-''' 
+'''
 
+correctText = '''
+┌───────────────┐
+│               │
+│    Correct!   │
+│               │
+└───────────────┘
+'''
+inCorrectText = '''
+┌─────────────────┐
+│                 │
+│    Incorrect    │
+│ You lost a life │
+│                 │
+└─────────────────┘
+'''
 quizoptions = ["[      play quiz       ]",
                "[ Add custom questions ]",
                "[   view high scores   ]",

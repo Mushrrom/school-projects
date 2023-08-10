@@ -49,7 +49,6 @@ except ModuleNotFoundError:
           "program from a terminal")
     sys.exit(1)
 
-print(textstrs.controlstext)
 term_height = os.get_terminal_size().lines
 term_width = os.get_terminal_size().columns
 curses.start_color()
@@ -59,14 +58,17 @@ curses.curs_set(False)
 screen.keypad(True)
 curses.noecho()
 
-curses.init_pair(1, 1, 0)
-curses.init_pair(2, 0, 1)
+curses.init_pair(1, 1, 0) # default text
+curses.init_pair(2, 0, 1) # Inverted from default
+curses.init_pair(3, 4, 0) # Red - for lives count and incorrect
+curses.init_pair(4, 5, 0)
+
 
 # Welcome screen
 for count, i in enumerate(textstrs.welcometext.split("\n")):
-    add_str_center(i, -1, round(term_height/2)-4+count, 1)
+    add_str_center(i, -1, (term_height//2)-4+count, 1)
 
-add_str_center("[Press any key to start]", -1, round(term_height/2)+1, 2)
+add_str_center("[Press any key to start]", -1, (term_height//2)+1, 2)
 screen.refresh()
 screen.getch()
 screen.clear()
@@ -75,9 +77,9 @@ screen.clear()
 
 # Controls screen
 for count, i in enumerate(textstrs.controlstext.split("\n")):
-    add_str_center(i, -1, round(term_height/2)-4+count, 1)
+    add_str_center(i, -1, (term_height//2)-4+count, 1)
 
-add_str_center("[start]", -1, term_height//2 + 4, 2)
+add_str_center("[start]", -1, term_height//2 + 3, 2)
 
 # for checking when enter is pressed on controls screen
 
@@ -91,7 +93,7 @@ while True:
 screen.clear()
 
 for count, i in enumerate(textstrs.quizshowtext.split("\n")):
-    add_str_center(i, -1, round(term_height/2)-12+count, 1)
+    add_str_center(i, -1, (term_height//2)-12+count, 1)
     
 
 add_str_center(quizoptions[0], -1, (term_height//2)-6, 2)
