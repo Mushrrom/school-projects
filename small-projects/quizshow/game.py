@@ -56,19 +56,25 @@ def get_user_input(input_name):
     strn = ""
     while True:
         char = screen.getch()
-        if char == 10:
+        if char == 10: # enter
             break
-
-        strn += chr(char)
-        screen.addstr(term_height//2, index, chr(char), curses.color_pair(1))
-        index += 1
+        if char == 8: # delete
+            if index > 0:
+                index -= 1
+                strn = strn[:-1]
+                screen.addstr(term_height//2, index, " ")
+        elif ((32<=char<=33 or 35<=char<=38 or 40<=char<=43 or 45<=char<=127)
+            and index <term_width):
+            strn += chr(char)
+            screen.addstr(term_height//2, index, chr(char), curses.color_pair(1))
+            index += 1
     return strn.strip(",")
 
 
 def save_score(sc): # sc short for score
     if not os.path.exists("highscores.csv"):
         with open("highscores.csv", "w") as f:
-            f.write(f"{sc},0,0,0,0,\n{get_user_input('Congratulations on high score! Enter your name:')},0,0,0,0,")
+            f.write(f"{sc},-1,-1,-1,-1,\n{get_user_input('Congratulations on high score! Enter your name:')},null,null,null,null,")
 
         return 0
     with open("highscores.csv", "r") as f:
