@@ -155,7 +155,7 @@ def play_game(curses_imp, screen_imp):
         add_str_center(answers[3], -1, (term_height//2)+3, 1)
 
         # cheat
-        add_str_center(str(correctIndex), -1, 1, 1)
+        # add_str_center(str(correctIndex), -1, 1, 1)
 
         bottom_text()
 

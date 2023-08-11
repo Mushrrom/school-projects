@@ -13,7 +13,10 @@ global screen
 global term_height
 global term_width
 
-
+import test
+test.var1 = "test"
+print(test.var1)
+quit()
 def add_str_center(in_str, centerx=-1, y = 0, color = 0):
     '''a func that adds a string to the screen centered at a given location'''
 

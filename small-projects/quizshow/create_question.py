@@ -62,3 +62,5 @@ def create_question(curses_imp, screen_imp, th_imp, tw_imp): # make question
     screen.clear()
     add_str_center("Created question :)", -1, term_height//2, 1)
 
+if __name__ == "__main__":
+    print("Please run main.py")
