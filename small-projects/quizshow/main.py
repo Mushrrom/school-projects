@@ -86,7 +86,6 @@ add_str_center("[start]", -1, term_height//2 + 3, 2)
 
 # this just waits until enter is pressesd - it occurs pretty commonly here
 while True:
-    screen.addstr(0, 0, str(screen.getch())+ "     ")
     if screen.getch() == 10: break
 
 

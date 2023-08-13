@@ -31,7 +31,7 @@ def get_user_input(input_name):
                 strn = strn[:-1]
                 screen.addstr(term_height//2, index, " ")
         elif ((32<=char<=33 or 35<=char<=38 or 40<=char<=43 or 45<=char<=127)
-            and index <term_width):
+            and index <term_width-1):
             strn += chr(char)
             screen.addstr(term_height//2, index, chr(char), curses.color_pair(1))
             index += 1

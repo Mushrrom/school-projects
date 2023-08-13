@@ -10,6 +10,11 @@ welcometext = """
 
 This program uses trivia questions downloaded from Open Trivia Database (opentdb.org)
 (All questions have been already downloaded. No requests will be sent to the site)
+
+Also I strongly reccommend playing this in a full screen terminal to avoid
+errors with printing text 
+
+also if this is blue that is an error with your terminal this should not be blue
 """
 
 controlstext = """

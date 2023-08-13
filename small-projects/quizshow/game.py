@@ -128,7 +128,8 @@ def play_game(curses_imp, screen_imp):
     while lives > 0:
         question = random.choice(questionsjson["results"])
         screen.clear()
-
+        boxDashes = ''
+        boxSpaces = ''
         # Varibles for making the question box
         qLength = len(question["question"])
         boxSpaces = ''.join(" " for _ in range(qLength+4))

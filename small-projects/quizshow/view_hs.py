@@ -6,15 +6,23 @@ def add_str_center(in_str, centerx=-1, y = 0, color = 1):
 
 
 def view_hs(scr_imp, cur_imp, tw_imp, term_height): # view high scores
-    with open("highscores.csv", "r") as f:
-        data = f.read().split("\n")
-        data[0] = data[0].split(",")
-        data[1] = data[1].split(",")
     global screen, curses, term_width
     screen = scr_imp
     curses = cur_imp
     term_width = tw_imp
     screen.clear()
+
+    try:
+        with open("highscores.csv", "r") as f:
+            data = f.read().split("\n")
+            data[0] = data[0].split(",")
+            data[1] = data[1].split(",")
+    except:
+        add_str_center("High scores do not exist. Play the game to make them :)",
+                       -1, term_height//2)
+        screen.getch()
+        return
+
     
     add_str_center("high scores:", -1, term_height//2-7)
     add_str_center(f"{data[0][0]} by {data[1][0]}", -1, term_height//2-4)
