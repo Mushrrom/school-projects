@@ -9,18 +9,19 @@ ATOM_COUNTS = 1
 
 element_list = [[],[]]
 current_number = "-1" # pylint: disable=C0103
-llast = ""
+last_char = ""
 bracket_contents = [1]
 
 for count, current_char in enumerate(molecules):
-    # honestly the best way i could think of to check if value is int
+    # If it's a number than add it to the current number, for numbers of elements
     if current_char.isdigit():
         current_number = current_char + current_number if current_number != "-1" else current_char
-        current_number_as_int = int(current_number)
         continue
 
     int_current_number = int(current_number)
     adj_current_number = int_current_number if int_current_number > 1 else 1
+    current_element = current_char+last_char # for 2 letter elements
+    brackets_multiplied = functools.reduce(lambda x, y: x*y, bracket_contents)
 
     # check if its a bracket and add/remove to the list of bracket numbers if it is
     match current_char:
@@ -29,32 +30,28 @@ for count, current_char in enumerate(molecules):
             current_number = "-1"
             continue
         case "(":
-            bracket_contents.clear()
+            bracket_contents.pop(-1)
             current_number = "-1"
             continue
 
-
     # For elements like He which have 2 letters and the second is always a lower case
     if current_char == current_char.lower():
-        llast = current_char
+        last_char = current_char
         continue
 
-    current_character = current_char+llast # gets the lower case for 2 letter elements
-
-    # Check if element already exists and add to that index if it does
-    if current_character in element_list[0]:
-        element_list[ATOM_COUNTS][element_list[0].index(current_character)] += ((adj_current_number)
-            * functools.reduce(lambda x, y: x*y, bracket_contents))
-
-    # add element to list and set first value
+    # If the element already exists in the list of elements add it to that index
+    if current_element in element_list[0]:
+        current_element_index = element_list[0].index(current_element)
+        element_list[ATOM_COUNTS][current_element_index] += adj_current_number * brackets_multiplied
+    # If the element doesnt already exist in the list of elements than add that
+    # element to the list
     else:
-        element_list[ATOM_NAMES].append(current_character)
-        element_list[ATOM_COUNTS].append((int_current_number if int(current_number) >= 0 else 1)
-            * functools.reduce(lambda x, y: x*y, bracket_contents))
+        element_list[ATOM_NAMES].append(current_element)
+        element_list[ATOM_COUNTS].append(adj_current_number * brackets_multiplied)
 
-    # reset values
+    # reset values after the element is added to the list
     current_number = "-1"
-    llast = ""
+    last_char = ""
 
 
 # print out all of the values from the list
