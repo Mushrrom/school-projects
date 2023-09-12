@@ -1,4 +1,9 @@
 .pylintrc
 pyrightconfig.json
-*test.py
+*test*.py
+Text-based-adventure/saves/*
+perimeter.py
+guessing_game.py
+funcmenu.py
+bottles.py
 __pycache__

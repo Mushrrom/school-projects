@@ -6,7 +6,7 @@ molecules = reversed(list(input("Enter molecule chain: ")))
 ATOM_NAMES = 0
 ATOM_COUNTS = 1
 
-
+# Variables that are adjusted across iterations
 element_list = [[],[]]
 current_number = "-1" # pylint: disable=C0103
 last_char = ""
