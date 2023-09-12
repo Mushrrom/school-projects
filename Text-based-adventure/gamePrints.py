@@ -32,3 +32,6 @@ def addGameInfo(player, key, tick):
     screen.addstr(33, 15, f"score: {player.score}")
     screen.addstr(33, 30, f"tick: {tick}")
     screen.addstr(33, 45, f"last key: {key}")
+
+    for i in range(1, 9):
+        screen.addstr(33, 98+i, str(i), curses.color_pair(i+10))

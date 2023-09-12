@@ -40,7 +40,8 @@ for i in range(1, 9):
         screen.addstr(i, j*3, str(i)+str(j), curses.color_pair(int(str(i)+str(j))))
 
 # add_str_cetner is defined in gamePrints.py to print strings at the center of
-# the screen (basically copied straight from quiz show)
+# the screen (basically copied straight from quiz show). It takes the string to
+# add and Y position as inputs, along with an optional input for the colour
 add_str_center("----------------------", 10)
 add_str_center("|text based adventure|", 11)
 add_str_center("----------------------", 12)
@@ -67,6 +68,8 @@ while True:
 
 # Keep track of how many game ticks have passed
 tick = 0
+
+
 if sel == 0:
     screen.clear()
     print_borders()
@@ -81,8 +84,29 @@ if sel == 0:
     level.renderLevel()
     while True:
         key = screen.getch()
+        match key:
+            case 258:  # move down
+                if not level.player_pos[1] >= 26:
+                    level.movePlayer([0, 1], player)
+                elif level.exits[3] == 1 and 51 < level.player_pos[0] < 57:
+                    level.movePlayer([0, 1], player)
+            case 259:  # move up
+                if not level.player_pos[1] <= 6:
+                    level.movePlayer([0, -1], player)
+                elif level.exits[2] == 1 and 51 < level.player_pos[0] < 57:
+                    level.movePlayer([0, -1], player)
+            case 261:  # Move right
+                if not level.player_pos[0] >= 102:
+                    level.movePlayer([1, 0], player)
+                elif level.exits[0] == 1 and 12 < level.player_pos[1] < 18:
+                    level.movePlayer([1, 0], player)
+            case 260:  # Move left
+                if not level.player_pos[0] <= 6:
+                    level.movePlayer([-1, 0], player)
+                elif level.exits[1] == 1 and 12 < level.player_pos[1] < 18:
+                    level.movePlayer([-1, 0], player)
         tick += 1
-        level.movePlayer([0, 1], player)
+        # level.movePlayer([0, 1], player)
         level.updateEnemies()
         level.renderLevel()
         addGameInfo(player, key, tick)
