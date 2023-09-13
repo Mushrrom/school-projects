@@ -46,8 +46,8 @@ add_str_center("----------------------", 10)
 add_str_center("|text based adventure|", 11)
 add_str_center("----------------------", 12)
 
-add_str_center("[ Play game ]", 15, 18)
-add_str_center("[ Open save ]", 18)
+add_str_center("[        Play game        ]", 15, 18)
+add_str_center("[ Continue from last save ]", 18)
 print_borders()
 sel = 0
 while True:
@@ -56,13 +56,13 @@ while True:
         case 258:  # character code 258 is a down arrow
             if sel != 1:
                 sel = 1
-                add_str_center("[ Play game ]", 15)
-                add_str_center("[ Open save ]", 18, 18)
+                add_str_center("[        Play game        ]", 15)
+                add_str_center("[ Continue from last save ]", 18, 18)
         case 259:  # Character code 259 is up arrow
             if sel != 0:
                 sel = 0
-                add_str_center("[ Play game ]", 15, 18)
-                add_str_center("[ Open save ]", 18)
+                add_str_center("[        Play game        ]", 15, 18)
+                add_str_center("[ Continue from last save ]", 18)
         case 10:  # Character code 10 is enter
             break
 
@@ -74,67 +74,79 @@ currentX = 0
 currentY = 0
 
 if sel == 0:
-    screen.clear()
-    print_borders()
-    # add whole story and stuff later
-    add_str_center("This is some story wow", 8)
-    add_str_center("Press the any key to continue", 14)
+    filelist = [f for f in os.listdir("saves/1")]
+    for f in filelist:
+        os.remove(os.path.join("saves/1", f))
+screen.clear()
+print_borders()
+# add whole story and stuff later
+add_str_center("This is some story wow", 8)
+add_str_center("Press the any key to continue", 14)
 
-    player = newPlayer()
-    # addGameInfo(player)
+player = newPlayer()
+# addGameInfo(player)
 
-    level = createLevel(0, 0, 1)
+level = createLevel(0, 0, 1)
+level.renderLevel()
+
+# test item
+player.pickupItem("test123", 40)
+player.pickupItem("test123", 3)
+
+while True:
+    key = screen.getch()
+
+    # This handles player movement, it first checks what direction the
+    # player is moving, then checks whether they are going to go into a
+    # wall. And then the elif checks if the wall is actually an exit that
+    # the player can go into. The numbers are because when curses gets a
+    # keyboard input it stores it as a character code
+    match key:
+        case 258:  # move down
+            if not level.player_pos[1] >= 26:
+                level.movePlayer([0, 1], player)
+            elif level.exits[3] == 1 and 51 < level.player_pos[0] < 57:
+                level.movePlayer([0, 1], player)
+        case 259:  # move up
+            if not level.player_pos[1] <= 6:
+                level.movePlayer([0, -1], player)
+            elif level.exits[2] == 1 and 51 < level.player_pos[0] < 57:
+                level.movePlayer([0, -1], player)
+        case 261:  # Move right
+            if not level.player_pos[0] >= 102:
+                level.movePlayer([1, 0], player)
+            elif level.exits[0] == 1 and 12 < level.player_pos[1] < 18:
+                level.movePlayer([1, 0], player)
+        case 260:  # Move left
+            if not level.player_pos[0] <= 6:
+                level.movePlayer([-1, 0], player)
+            elif level.exits[1] == 1 and 12 < level.player_pos[1] < 18:
+                level.movePlayer([-1, 0], player)
+        case 105:
+            player.showInventory()
+
+    tick += 1
+
+    # checks if the player should be moving to a different room, and moves
+    # them to a different room if they are. See createLevel.py for more
+    # info on what this function does
+    if level.player_pos[1] == 0:
+        currentY += 1
+        level = createLevel(currentX, currentY, 0)
+    if level.player_pos[1] == 32:
+        currentY -= 1
+        level = createLevel(currentX, currentY, 1)
+    if level.player_pos[0] == 0:
+        currentX += 1
+        level = createLevel(currentX, currentY, 2)
+    if level.player_pos[0] == 108:
+        currentX -= 1
+        level = createLevel(currentX, currentY, 3)
+
+    # Update enemies and render level + game info
+    level.updateEnemies()
     level.renderLevel()
-    while True:
-        key = screen.getch()
-
-        # This handles player movement, it first checks what direction the
-        # player is moving, then checks whether they are going to go into a
-        # wall. And then the elif checks if the wall is actually an exit that
-        # the player can go into. The numbers are because when curses gets a
-        # keyboard input it stores it as a character code
-        match key:
-            case 258:  # move down
-                if not level.player_pos[1] >= 26:
-                    level.movePlayer([0, 1], player)
-                elif level.exits[3] == 1 and 51 < level.player_pos[0] < 57:
-                    level.movePlayer([0, 1], player)
-            case 259:  # move up
-                if not level.player_pos[1] <= 6:
-                    level.movePlayer([0, -1], player)
-                elif level.exits[2] == 1 and 51 < level.player_pos[0] < 57:
-                    level.movePlayer([0, -1], player)
-            case 261:  # Move right
-                if not level.player_pos[0] >= 102:
-                    level.movePlayer([1, 0], player)
-                elif level.exits[0] == 1 and 12 < level.player_pos[1] < 18:
-                    level.movePlayer([1, 0], player)
-            case 260:  # Move left
-                if not level.player_pos[0] <= 6:
-                    level.movePlayer([-1, 0], player)
-                elif level.exits[1] == 1 and 12 < level.player_pos[1] < 18:
-                    level.movePlayer([-1, 0], player)
-
-        tick += 1
-
-        # checks if the player should be moving to a different room, and moves
-        # them to a different room if they are. See createLevel.py for more
-        # info on what this function does
-        if level.player_pos[1] == 0:
-            currentY += 1
-            level = createLevel(currentX, currentY, 0)
-        if level.player_pos[1] == 32:
-            currentY -= 1
-            level = createLevel(currentX, currentY, 1)
-        if level.player_pos[0] == 0:
-            currentX += 1
-            level = createLevel(currentX, currentY, 2)
-        if level.player_pos[0] == 108:
-            currentX -= 1
-            level = createLevel(currentX, currentY, 3)
-        level.updateEnemies()
-        level.renderLevel()
-        addGameInfo(player, key, tick, currentX, currentY)
+    addGameInfo(player, key, tick, currentX, currentY)
 
 screen.getch()
 

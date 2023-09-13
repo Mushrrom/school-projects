@@ -26,6 +26,7 @@ def print_borders():
     for i in range(35):  # right vertical border
         screen.addch(i, 108, '|')
 
+
 def addGameInfo(player, key, tick, x, y):
     '''add game info to bottom of screen'''
     screen.addstr(33, 1, f"health: {player.health}")
@@ -35,6 +36,13 @@ def addGameInfo(player, key, tick, x, y):
 
     for i in range(1, 9):
         screen.addstr(33, 98+i, str(i), curses.color_pair(i+10))
-    
+
     screen.addstr(33, 60, f"x: {x}")
     screen.addstr(33, 65, f"y: {y}")
+
+
+def waitUntilEnter():
+    '''Waits until enter key is pressed'''
+    while True:
+        if screen.getch() == 10:
+            break
