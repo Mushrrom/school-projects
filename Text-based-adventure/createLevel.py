@@ -8,39 +8,56 @@ from gamePrints import *
 class createLevel():
     def __init__(self, x, y, entryLoc):
         self.exits = [0, 0, 0, 0] # right, left, up, down
-
-        self.exits[0] = random.randint(0, 1)
-        self.exits[1] = random.randint(0, 1)
-        self.exits[2] = random.randint(0, 1)
-        self.exits[3] = random.randint(0, 1)
-        self.exits = [1,1,1,1] # for testing
+        print("abv")
+        
+        # self.exits = [1,1,1,1] # for testing
         if not os.path.exists(f"saves/1/{x}_{y}"):
-            # check adjacent rooms for exits and add exit if there is one
-            if os.path.exists(f"saves/1/{x+1}_{y}"):
+            # This absolute mess checks whether the adjacent rooms have already
+            # Been saved, and if they have it gets what the exit is in that
+            # room and then uses that to figure out what exits should be in the
+            # current room. If there isnt another room then it just randomly
+            # decides whether to put an exit at that location.
+            if os.path.exists(f"saves/1/{x+1}_{y}"):  # room to the right
                 with open(f"saves/1/{x+1}_{y}", "r") as f:
                     lvljson = json.loads(f.read())
-                if lvljson["exits"][2] == 1:
+                if lvljson["exits"][0] == 1:
                     self.exits[1] = 1
-            if os.path.exists(f"saves/1/{x-1}_{y}"):
+            else:
+                self.exits[1] = random.randint(0, 1)
+
+            if os.path.exists(f"saves/1/{x-1}_{y}"):  # room to the left
                 with open(f"saves/1/{x-1}_{y}", "r") as f:
                     lvljson = json.loads(f.read())
                 if lvljson["exits"][1] == 1:
-                    self.exits[2] = 1
-            if os.path.exists(f"saves/1/{x}_{y+1}"):
+                    self.exits[0] = 1
+            else:
+                self.exits[0] = random.randint(0, 1)
+
+            if os.path.exists(f"saves/1/{x}_{y+1}"):  # room upwards
                 with open(f"saves/1/{x}_{y+1}", "r") as f:
                     lvljson = json.loads(f.read())
-                if lvljson["exits"][4] == 1:
-                    self.exits[3] = 1
-            if os.path.exists(f"saves/1/{x}_{y-1}"):
+                if lvljson["exits"][3] == 1:
+                    self.exits[2] = 1
+            else:
+                self.exits[2] = random.randint(0, 1)
+
+            if os.path.exists(f"saves/1/{x}_{y-1}"):  # room downwards
                 with open(f"saves/1/{x}_{y-1}", "r") as f:
                     lvljson = json.loads(f.read())
-                if lvljson["exits"][3] == 1:
-                    self.exits[4] = 1
+                if lvljson["exits"][2] == 1:
+                    self.exits[3] = 1
+            else:
+                self.exits[3] = random.randint(0, 1)
 
-            # Save level
+            # This just saves the exits we have created
             with open(f"saves/1/{x}_{y}", "w") as f:
                 json.dump({"exits": self.exits}, f)
 
+        # if the room already exits we can just check what is already saved.
+        else:
+            with open(f"saves/1/{x}_{y}") as f:
+                lvljson = json.loads(f.read())
+                self.exits = lvljson["exits"]
         # set enemy positions
         self.enemies = []
         self.enemies_health = []
@@ -48,7 +65,10 @@ class createLevel():
             self.enemies.append([random.randint(40, 80), random.randint(6, 20)])
             self.enemies_health.append(50)
 
-        # set player pos. Format of player pos is [x, y]
+        # set player pos. Format of player pos is [x, y]. X starts at 0 for left
+        # side of the screen and increases towards the right. Y starts at 0 for
+        # the top of the screen and then increases going down. This is due to
+        # how curses manages positions
         self.player_pos = [0, 0]
         if entryLoc == 0:  # enter from bottom
             self.player_pos = [54, 31]
@@ -61,7 +81,8 @@ class createLevel():
 
 
     def movePlayer(self, movement, player):
-        '''move player, takes a list as input and adds that to player pos'''
+        '''move player, takes a list as input and adds that to player pos, and 
+        also calculates damage to enemies'''
         self.player_pos[0] += movement[0]
         self.player_pos[1] += movement[1]
 
@@ -95,7 +116,7 @@ class createLevel():
         for i in range(1, 31):
             screen.addstr(i, 103, border)
 
-        # Add the exit paths
+        # Add the exit paths if there is an exit
         if self.exits[0] == 1:
             for i in range(5):
                 screen.addstr(13+i, 103, "     ")
@@ -108,6 +129,7 @@ class createLevel():
         if self.exits[3] == 1:
             for i in range(5):
                 screen.addstr(27+i, 52, "     ")
+
         # Add player to screen
         screen.addstr(self.player_pos[1], self.player_pos[0], "☺", curses.color_pair(31))
 

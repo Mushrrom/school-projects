@@ -69,6 +69,9 @@ while True:
 # Keep track of how many game ticks have passed
 tick = 0
 
+# Varibles for storing location current room
+currentX = 0
+currentY = 0
 
 if sel == 0:
     screen.clear()
@@ -84,6 +87,12 @@ if sel == 0:
     level.renderLevel()
     while True:
         key = screen.getch()
+
+        # This handles player movement, it first checks what direction the
+        # player is moving, then checks whether they are going to go into a
+        # wall. And then the elif checks if the wall is actually an exit that
+        # the player can go into. The numbers are because when curses gets a
+        # keyboard input it stores it as a character code
         match key:
             case 258:  # move down
                 if not level.player_pos[1] >= 26:
@@ -105,11 +114,27 @@ if sel == 0:
                     level.movePlayer([-1, 0], player)
                 elif level.exits[1] == 1 and 12 < level.player_pos[1] < 18:
                     level.movePlayer([-1, 0], player)
+
         tick += 1
-        # level.movePlayer([0, 1], player)
+
+        # checks if the player should be moving to a different room, and moves
+        # them to a different room if they are. See createLevel.py for more
+        # info on what this function does
+        if level.player_pos[1] == 0:
+            currentY += 1
+            level = createLevel(currentX, currentY, 0)
+        if level.player_pos[1] == 32:
+            currentY -= 1
+            level = createLevel(currentX, currentY, 1)
+        if level.player_pos[0] == 0:
+            currentX += 1
+            level = createLevel(currentX, currentY, 2)
+        if level.player_pos[0] == 108:
+            currentX -= 1
+            level = createLevel(currentX, currentY, 3)
         level.updateEnemies()
         level.renderLevel()
-        addGameInfo(player, key, tick)
+        addGameInfo(player, key, tick, currentX, currentY)
 
 screen.getch()
 
