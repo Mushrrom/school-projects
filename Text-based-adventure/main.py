@@ -84,10 +84,52 @@ print_borders()
 # add whole story and stuff later
 add_str_center("This is some story wow", 8)
 add_str_center("Press the any key to continue", 14)
-
+screen.getch()
 player = newPlayer()
 # addGameInfo(player)
 
+screen.clear()
+# Get initial weapon
+add_str_center("Choose your weapon (press enter to select)", 5)
+add_str_center("Sword of something - dmg: 10, modifier: 20", 10, 18)
+add_str_center("Dagger of coolness - dmg: 20, modifier: 10", 12)
+add_str_center("Stick - dmg: 1, modifier: 1", 14)
+sel = 0
+while True:
+    match screen.getch():
+        case 258:
+            if sel != 2:
+                sel += 1
+        case 259:
+            if sel != 0:
+                sel -= 1
+        case 10:
+            break
+
+    if sel == 0:
+        add_str_center("Sword of something - dmg: 10, modifier: 20", 10, 18)
+        add_str_center("Dagger of coolness - dmg: 20, modifier: 10", 12)
+        add_str_center("Stick - dmg: 1, modifier: 1", 14)
+    elif sel == 1:
+        add_str_center("Sword of something - dmg: 10, modifier: 20", 10)
+        add_str_center("Dagger of coolness - dmg: 20, modifier: 10", 12, 18)
+        add_str_center("Stick - dmg: 1, modifier: 1", 14)
+    else:
+        add_str_center("Sword of something - dmg: 10, modifier: 20", 10)
+        add_str_center("Dagger of coolness - dmg: 20, modifier: 10", 12)
+        add_str_center("Stick - dmg: 1, modifier: 1", 14, 18)
+
+if sel == 0:
+    player.pickupItem("sword of something")
+    player.setWeapon("sword of something")
+elif sel == 1:
+    player.pickupItem("dagger of coolness")
+    player.setWeapon("dagger of coolness")
+else:
+    player.pickupItem("stick")
+    player.setWeapon("stick")
+
+screen.clear()
 level = createLevel(0, 0, 1)
 level.renderLevel()
 

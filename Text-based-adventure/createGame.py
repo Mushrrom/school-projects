@@ -32,8 +32,12 @@ class newPlayer():
             self.inventory[INV_ITEMS].pop(item_index)
 
     def setWeapon(self, weapon):
-        if weapon in self.inventory:
+        print(self.inventory)
+        if weapon in self.inventory[INV_ITEMS]:
             self.weapon = weapon
+            print(f"success: {weapon}")
+        else:
+            print(weapon)
 
     def showInventory(self):
         verticalBorder = '|' + ''.join(" " for _ in range(30)) + '|' + ''.join(" " for _ in range(67)) + "|"

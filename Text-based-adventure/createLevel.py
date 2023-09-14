@@ -88,7 +88,7 @@ class createLevel():
 
         # Check if hit enemies and calculate damage
         for count, i in enumerate(self.enemies):
-            if self.player_pos[0]==i[0] and self.player_pos[1]==i[1]:
+            if self.player_pos[0] in [i[0], i[0]+1] and self.player_pos[1]==i[1]:
                 playerWeaponStats = weaponStats[player.weapon]
                 weaponDamage = playerWeaponStats["base_dmg"] + random.randint(0, playerWeaponStats["modifier"])
                 self.enemies_health[count] -= weaponDamage
@@ -96,7 +96,7 @@ class createLevel():
                 # make enemy die if health less than 0
                 if self.enemies_health[count] <= 0:
                     self.enemies_health.pop(count)
-                    self.enemes.pop(count)
+                    self.enemies.pop(count)
 
 
     def renderLevel(self):
