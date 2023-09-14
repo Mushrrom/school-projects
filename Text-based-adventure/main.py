@@ -73,10 +73,12 @@ tick = 0
 currentX = 0
 currentY = 0
 
+# if player does not want to continue save then delete all files in save folder
 if sel == 0:
-    filelist = [f for f in os.listdir("saves/1")]
+    filelist = os.listdir("saves/1")
     for f in filelist:
         os.remove(os.path.join("saves/1", f))
+
 screen.clear()
 print_borders()
 # add whole story and stuff later
@@ -90,8 +92,10 @@ level = createLevel(0, 0, 1)
 level.renderLevel()
 
 # test item
-player.pickupItem("test123", 40)
-player.pickupItem("test123", 3)
+player.pickupItem("test", 40)
+player.pickupItem("test", 3)
+player.pickupItem("test2", 1)
+player.pickupItem("test2", 2)
 
 while True:
     key = screen.getch()

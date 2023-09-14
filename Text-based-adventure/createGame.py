@@ -36,15 +36,50 @@ class newPlayer():
             self.weapon = weapon
 
     def showInventory(self):
-        verticalBorder = '|' + ''.join(" " for _ in range(97)) + '|'
+        verticalBorder = '|' + ''.join(" " for _ in range(30)) + '|' + ''.join(" " for _ in range(67)) + "|"
         for i in range(25):
             add_str_center(verticalBorder, 4+i)
         horisontalBorder = "".join("-" for _ in range(97))
         add_str_center(horisontalBorder, 4)
         add_str_center(horisontalBorder, 28)
 
-        for count, i in enumerate(self.inventory[INV_ITEMS]):
-            itemString = i + " : " + str(self.inventory[INV_COUNTS][count])
-            screen.addstr(5+count, 8, itemString)
-        waitUntilEnter()
+        invLength = len(self.inventory[INV_ITEMS])
+        sel = 0
+        while True:
+            # Print the inventory items
+            for count, i in enumerate(self.inventory[INV_ITEMS]):
+                itemString = i + " : " + str(self.inventory[INV_COUNTS][count])
+                # If item is current selection set colour to white bg else set
+                # black bg
+                colour = 18 if sel == count else 81
+                screen.addstr(5+count, 8, itemString, curses.color_pair(colour))
+
+            # clear item description area
+            spaces = "".join(" " for _ in range(67))
+            for i in range(5, 29):
+                screen.addstr(i, 36, spaces)
+
+            # itemDescriptions is just a JSON object of all items in the game
+            # saved in consts.py
+            selectedItemDesc =  itemDescriptions[self.inventory[INV_ITEMS][sel]]
+
+            # item title
+            screen.addstr(5, 36, selectedItemDesc[0], curses.A_UNDERLINE)
+            # item description
+            for count, i in enumerate(selectedItemDesc[1:]):
+                screen.addstr(7+count, 36, i)
+
+            # wait for an input to move cursor up or down or select an item
+            match screen.getch():
+                case 258:
+                    if sel != invLength-1:
+                        sel += 1
+                case 259:
+                    if sel != 0:
+                        sel -= 1
+                case 10:
+                    break
+        
+
+
 
