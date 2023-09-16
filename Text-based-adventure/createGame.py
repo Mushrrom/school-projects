@@ -82,8 +82,16 @@ class newPlayer():
                     if sel != 0:
                         sel -= 1
                 case 10:
+                    if self.inventory[INV_ITEMS][sel] in weaponStats:
+                        self.setWeapon(self.inventory[INV_ITEMS][sel])
+                        add_str_center(f"Equiped {self.inventory[INV_ITEMS][sel]}", 15)
+                        screen.getch()
+                case 27:
                     break
-        
+
+
+
+
 
 
 

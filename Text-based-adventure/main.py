@@ -25,6 +25,8 @@ curses.noecho()
 
 # set up default colour palette (colour pair will be fg colour bg colour based on
 # terminal colour palette)
+# E.g 18 is black text with a white bg because colour code 1 for foreground is 
+# black and colour code 8 for background is white
 # This sets it up with the first number being FG and the second being BG
 curses.start_color()
 curses.use_default_colors()
@@ -50,6 +52,11 @@ add_str_center("[        Play game        ]", 15, 18)
 add_str_center("[ Continue from last save ]", 18)
 print_borders()
 sel = 0
+
+# This is logic for selecting items. this code, or similar code is repeated
+# a lot throughout my code, and not every time is fully commented. If you are 
+# curious about the character codes. The "last key" thing in info shows the 
+# character code (which is very useful for me to make the game)
 while True:
     btn = screen.getch()  # screen.getch gets keyboard input as char code
     match btn:
@@ -89,13 +96,16 @@ player = newPlayer()
 # addGameInfo(player)
 
 screen.clear()
-# Get initial weapon
+
+
+# player selects initial weapon
 add_str_center("Choose your weapon (press enter to select)", 5)
-add_str_center("Sword of something - dmg: 10, modifier: 20", 10, 18)
-add_str_center("Dagger of coolness - dmg: 20, modifier: 10", 12)
+add_str_center("stormbreaker blade - dmg: 10, modifier: 35", 10, 18)
+add_str_center("Bloodmoon Dagger - dmg: 20, modifier: 10", 12)
 add_str_center("Stick - dmg: 1, modifier: 1", 14)
 sel = 0
 while True:
+    # Selection logic
     match screen.getch():
         case 258:
             if sel != 2:
@@ -106,25 +116,27 @@ while True:
         case 10:
             break
 
-    if sel == 0:
-        add_str_center("Sword of something - dmg: 10, modifier: 20", 10, 18)
-        add_str_center("Dagger of coolness - dmg: 20, modifier: 10", 12)
+    # Highlight current selection (absolutley horrible code)
+    if sel == 0:  # thanks for the names chatgpt
+        add_str_center("stormbreaker blade - dmg: 10, modifier: 35", 10, 18)
+        add_str_center("Bloodmoon Dagger - dmg: 20, modifier: 10", 12)
         add_str_center("Stick - dmg: 1, modifier: 1", 14)
     elif sel == 1:
-        add_str_center("Sword of something - dmg: 10, modifier: 20", 10)
-        add_str_center("Dagger of coolness - dmg: 20, modifier: 10", 12, 18)
+        add_str_center("stormbreaker blade - dmg: 10, modifier: 35", 10)
+        add_str_center("Bloodmoon Dagger - dmg: 20, modifier: 10", 12, 18)
         add_str_center("Stick - dmg: 1, modifier: 1", 14)
     else:
-        add_str_center("Sword of something - dmg: 10, modifier: 20", 10)
-        add_str_center("Dagger of coolness - dmg: 20, modifier: 10", 12)
+        add_str_center("stormbreaker blade - dmg: 10, modifier: 35", 10)
+        add_str_center("Bloodmoon Dagger - dmg: 20, modifier: 10", 12)
         add_str_center("Stick - dmg: 1, modifier: 1", 14, 18)
 
+# set weapon based on player selection
 if sel == 0:
-    player.pickupItem("sword of something")
-    player.setWeapon("sword of something")
+    player.pickupItem("stormbreaker blade")
+    player.setWeapon("stormbreaker blade")
 elif sel == 1:
-    player.pickupItem("dagger of coolness")
-    player.setWeapon("dagger of coolness")
+    player.pickupItem("Bloodmoon Dagger")
+    player.setWeapon("Bloodmoon Dagger")
 else:
     player.pickupItem("stick")
     player.setWeapon("stick")
@@ -138,6 +150,7 @@ player.pickupItem("test", 40)
 player.pickupItem("test", 3)
 player.pickupItem("test2", 1)
 player.pickupItem("test2", 2)
+player.pickupItem("stick")
 
 while True:
     key = screen.getch()

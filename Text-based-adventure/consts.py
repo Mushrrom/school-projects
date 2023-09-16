@@ -17,11 +17,11 @@ weaponStats = {
         "base_dmg": 10,
         "modifier": 4,
     },
-    "sword of something": {
+    "stormbreaker blade": {
         "base_dmg": 10,
-        "modifier": 20
+        "modifier": 35
     },
-    "dagger of coolness": {
+    "Bloodmoon Dagger": {
         "base_dmg": 20,
         "modifier": 10
     },
@@ -37,8 +37,8 @@ weaponStats = {
 itemDescriptions = {
     "test": ["test item", "line 1", "line 2", "line 3"],
     "test2": ["test item 2", "line 1 _ 111", "line 2 _ 111"],
-    "sword of something": ["Sword of Something", "Base damage: 10", "modifier: 20"],
-    "dagger of coolness": ["Dagger of coolness", "Base damage: 20", "modifier: 10"],
+    "stormbreaker blade": ["stormbreaker blade", "Base damage: 10", "modifier: 20"],
+    "Bloodmoon Dagger": ["Bloodmoon Dagger", "Base damage: 20", "modifier: 10"],
     "stick": ["Stick", "base damage: 1", "modifier: 1",
               "There is nothing special about this item you made a bad choice"]
 }
