@@ -19,9 +19,9 @@ if not os.path.exists("saves/1/"):
     os.mkdir("saves/1/")
 
 # Curses config
-curses.curs_set(False)
-screen.keypad(True)
-curses.noecho()
+curses.curs_set(False)  # hide cursor
+screen.keypad(True)  # use keypad (needed for arrow keys)
+curses.noecho()  # don't print keys pressed to screen
 
 # set up default colour palette (colour pair will be fg colour bg colour based on
 # terminal colour palette)
@@ -41,7 +41,7 @@ for i in range(1, 9):
     for j in range(1, 9):
         screen.addstr(i, j*3, str(i)+str(j), curses.color_pair(int(str(i)+str(j))))
 
-# add_str_cetner is defined in gamePrints.py to print strings at the center of
+# add_str_center is defined in gamePrints.py to print strings at the center of
 # the screen (basically copied straight from quiz show). It takes the string to
 # add and Y position as inputs, along with an optional input for the colour
 add_str_center("----------------------", 10)
@@ -76,7 +76,7 @@ while True:
 # Keep track of how many game ticks have passed
 tick = 0
 
-# Varibles for storing location current room
+# the location of the room
 currentX = 0
 currentY = 0
 
@@ -96,7 +96,6 @@ player = newPlayer()
 # addGameInfo(player)
 
 screen.clear()
-
 
 # player selects initial weapon
 add_str_center("Choose your weapon (press enter to select)", 5)
@@ -145,7 +144,7 @@ screen.clear()
 level = createLevel(0, 0, 1)
 level.renderLevel()
 
-# test item
+# test items
 player.pickupItem("test", 40)
 player.pickupItem("test", 3)
 player.pickupItem("test2", 1)
