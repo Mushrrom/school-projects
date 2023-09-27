@@ -13,6 +13,7 @@ class newPlayer():
 
 
     def pickupItem(self, item, count=1):
+        '''Player pick up item. Takes the item and count of item (default count = 1)'''
         if not item in self.inventory[INV_ITEMS]:
             self.inventory[INV_ITEMS].append(item)
             self.inventory[INV_COUNTS].append(count)
@@ -23,6 +24,7 @@ class newPlayer():
 
 
     def removeItem(self, item, count=1):
+        '''Remove an item from the player's inventory. Takes item and count of item as input'''
         item_index = self.inventory[INV_ITEMS].index(item)
         self.inventory[INV_COUNTS][item_index] -= count
 
@@ -32,6 +34,7 @@ class newPlayer():
             self.inventory[INV_ITEMS].pop(item_index)
 
     def setWeapon(self, weapon):
+        '''set the player's weapon'''
         print(self.inventory)
         if weapon in self.inventory[INV_ITEMS]:
             self.weapon = weapon
@@ -40,6 +43,7 @@ class newPlayer():
             print(weapon)
 
     def showInventory(self):
+        '''show the inventory menu. Includes all the logic for selecting items too'''
         verticalBorder = '|' + ''.join(" " for _ in range(30)) + '|' + ''.join(" " for _ in range(67)) + "|"
         for i in range(25):
             add_str_center(verticalBorder, 4+i)
