@@ -8,10 +8,10 @@ from createLevel import createLevel
 
 
 # game screen size will be 35x110
-screen_y, screen_x = screen.getmaxyx()
-if screen_y < 35 or screen_x < 110:
-    print("screen must be at least 110x35")
-    sys.exit(1)
+# screen_y, screen_x = screen.getmaxyx()
+# if screen_y < 35 or screen_x < 110:
+#     print("screen must be at least 110x35")
+#     sys.exit(1)
 
 
 curses.resize_term(35, 110) # resize the terminal to 35x110
@@ -82,6 +82,9 @@ tick = 0
 currentX = 0
 currentY = 0
 
+# Current level
+level = 1
+
 # if player does not want to continue save then delete all files in save folder
 if sel == 0:
     filelist = os.listdir("saves/1")
@@ -144,7 +147,7 @@ else:
 
 screen.clear()
 level = createLevel(0, 0, 1, True, [1, 1, 1, 1])
-level.renderLevel()
+level.renderLevel(player)
 
 # test items
 player.pickupItem("test", 40)
@@ -152,6 +155,8 @@ player.pickupItem("test", 3)
 player.pickupItem("test2", 1)
 player.pickupItem("test2", 2)
 player.pickupItem("stick")
+
+player.pickupItem("health flask I")
 
 while True:
     key = screen.getch()
@@ -166,23 +171,23 @@ while True:
             if not level.player_pos[1] >= 26:
                 level.movePlayer([0, 1], player)
             elif level.exits[3] == 1 and 51 < level.player_pos[0] < 57:
-                level.movePlayer([0, 1], player)
+                level.movePlayer([0, 1], player, level)
         case 259:  # move up
             if not level.player_pos[1] <= 6:
                 level.movePlayer([0, -1], player)
             elif level.exits[2] == 1 and 51 < level.player_pos[0] < 57:
-                level.movePlayer([0, -1], player)
+                level.movePlayer([0, -1], player, level)
         case 261:  # Move right
             if not level.player_pos[0] >= 102:
                 level.movePlayer([1, 0], player)
             elif level.exits[0] == 1 and 12 < level.player_pos[1] < 18:
-                level.movePlayer([1, 0], player)
+                level.movePlayer([1, 0], player, level)
         case 260:  # Move left
             if not level.player_pos[0] <= 6:
                 level.movePlayer([-1, 0], player)
             elif level.exits[1] == 1 and 12 < level.player_pos[1] < 18:
-                level.movePlayer([-1, 0], player)
-        case 105:
+                level.movePlayer([-1, 0], player, level)
+        case 105: # key "i" - shows inventory
             player.showInventory()
 
     tick += 1
@@ -205,7 +210,7 @@ while True:
 
     # Update enemies and render level + game info
     level.updateEnemies()
-    level.renderLevel()
+    level.renderLevel(player)
     addGameInfo(player, key, tick, currentX, currentY)
 
 screen.getch()

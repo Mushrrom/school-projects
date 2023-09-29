@@ -49,17 +49,17 @@ class createLevel():
             else:
                 self.exits[3] = random.randint(0, 1)
 
+            # Room overrides - basically just set cutom exits for stuff like
+            # making the first room always have 4 exits
+            if useOverride:
+                self.exits = exitOverides
+
             # This just saves the exits we have created
             with open(f"saves/1/{x}_{y}", "w") as f:
                 json.dump({"exits": self.exits}, f)
 
         # if the room already exits we can just check what is already saved.
         else:
-            # Room overrides - basically just set cutom exits for stuff like
-            # making the first room always have 4 exits
-            if useOverride:
-                self.exits = exitOverides
-
             with open(f"saves/1/{x}_{y}") as f:
                 lvljson = json.loads(f.read())
                 self.exits = lvljson["exits"]
@@ -87,7 +87,7 @@ class createLevel():
             self.player_pos = [2, 15]
 
 
-    def movePlayer(self, movement, player):
+    def movePlayer(self, movement, player, level=1):
         '''move player, takes a list as input and adds that to player pos, and 
         also calculates damage to enemies'''
         self.player_pos[0] += movement[0]
@@ -95,7 +95,8 @@ class createLevel():
 
         # Check if hit enemies and calculate damage
         for count, i in enumerate(self.enemies):
-            if self.player_pos[0] in [i[0], i[0]+1] and self.player_pos[1]==i[1]:
+            justAttacked = False
+            if self.player_pos[0] in [i[0], i[0]+1] and self.player_pos[1]==i[1] and not(player.attacked_last):
                 playerWeaponStats = weaponStats[player.weapon]
                 weaponDamage = playerWeaponStats["base_dmg"] + random.randint(0, playerWeaponStats["modifier"])
                 self.enemies_health[count] -= weaponDamage
@@ -105,8 +106,33 @@ class createLevel():
                     self.enemies_health.pop(count)
                     self.enemies.pop(count)
 
+                    # Get stuff for killing enemy
+                    if random.randint(0, 3) == 0:  # 1/4 chance to get health flask
+                        if level == 1:
+                            player.pickupItem("health flask I")
+                        elif level == 2:
+                            player.pickupItem("health flask II")
+                        elif level == 3:
+                            player.pickupItem("health flask III")
+                        elif level == 4:
+                            player.pickupItem("health flask IV")
 
-    def renderLevel(self):
+                        player.last_message = "You killed the enemy and got a health flask I"
+                    else:  # 3/4 chance to get coins
+                        coins = random.randint(2, 6)
+                        player.pickupItem("coin", coins)
+                        player.last_message = f"You killed the enemy and got {coins} coins"
+                else:
+                    player.last_message = f"You attacked the enemy and did {weaponDamage} damage"
+                    player.attacked_last = True
+            elif player.attacked_last:
+                player.attacked_last = False
+                attackDamage = random.randint(0, 5*level)
+                player.health -= attackDamage
+                player.last_message = f"The enemy attacked you and did {attackDamage} damage"
+
+
+    def renderLevel(self, player):
         '''Renders the level including player and enemies'''
         screen.clear()
         print_borders()
@@ -144,6 +170,11 @@ class createLevel():
         for i in self.enemies:
             screen.addstr(i[1], i[0], "☹", curses.color_pair(51))
 
+
+        # add last message to screen for attacking and stuff
+        if player.last_message != "":
+            screen.addstr(3, 3, player.last_message)
+            player.last_message = ""
         screen.refresh()
 
 
