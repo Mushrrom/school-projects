@@ -21,9 +21,10 @@ if not os.path.exists("saves/1/"):
     os.mkdir("saves/1/")
 
 # Curses config
-curses.curs_set(False)
-screen.keypad(True)
-curses.noecho()
+curses.curs_set(False)  # hide cursor
+screen.keypad(True)  # use keypad (needed for arrow keys)
+curses.noecho()  # don't print keys pressed to screen
+
 
 # set up default colour palette (colour pair will be fg colour bg colour based on
 # terminal colour palette)
@@ -98,14 +99,6 @@ player = newPlayer()
 # addGameInfo(player)
 
 screen.clear()
-import os
-import json
-import subprocess
-
-cmd = 'Get-CimInstance Win32_OperatingSystem | Select Caption, Version | ConvertTo-Json'
-p = subprocess.run(f'powershell.exe -c "{cmd}"', capture_output=True, encoding=os.device_encoding(1))
-result = json.loads(p.stdout)
-print(result)
 
 # player selects initial weapon
 add_str_center("Choose your weapon (press enter to select)", 5)
@@ -218,12 +211,3 @@ while True:
 
 screen.getch()
 
-
-# import os
-# import json
-# import subprocess
-#
-# cmd = 'Get-CimInstance Win32_OperatingSystem | Select Caption, Version | ConvertTo-Json'
-# p = subprocess.run(f'powershell.exe -c "{cmd}"', capture_output=True, encoding=os.device_encoding(1))
-# result = json.loads(p.stdout)
-# print(result)
