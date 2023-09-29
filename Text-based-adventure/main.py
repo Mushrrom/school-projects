@@ -3,7 +3,7 @@ import os
 
 from consts import * 
 from gamePrints import *
-from createGame import newPlayer
+from createPlayer import newPlayer
 from createLevel import createLevel
 
 
@@ -12,7 +12,9 @@ screen_y, screen_x = screen.getmaxyx()
 if screen_y < 35 or screen_x < 110:
     print("screen must be at least 110x35")
     sys.exit(1)
-curses.resize_term(35, 110) # resize the screen to 35x110
+
+
+curses.resize_term(35, 110) # resize the terminal to 35x110
 
 # Create save location
 if not os.path.exists("saves/1/"):
@@ -22,6 +24,10 @@ if not os.path.exists("saves/1/"):
 curses.curs_set(False)  # hide cursor
 screen.keypad(True)  # use keypad (needed for arrow keys)
 curses.noecho()  # don't print keys pressed to screen
+<<<<<<< HEAD
+=======
+
+>>>>>>> dev
 
 # set up default colour palette (colour pair will be fg colour bg colour based on
 # terminal colour palette)
@@ -54,8 +60,8 @@ print_borders()
 sel = 0
 
 # This is logic for selecting items. this code, or similar code is repeated
-# a lot throughout my code, and not every time is fully commented. If you are 
-# curious about the character codes. The "last key" thing in info shows the 
+# a lot throughout my code, and not every time is fully commented. If you are
+# curious about the character codes. The "last key" thing in info shows the
 # character code (which is very useful for me to make the game)
 while True:
     btn = screen.getch()  # screen.getch gets keyboard input as char code
@@ -141,7 +147,7 @@ else:
     player.setWeapon("stick")
 
 screen.clear()
-level = createLevel(0, 0, 1)
+level = createLevel(0, 0, 1, True, [1, 1, 1, 1])
 level.renderLevel()
 
 # test items
