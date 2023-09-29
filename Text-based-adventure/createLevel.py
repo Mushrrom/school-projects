@@ -6,10 +6,10 @@ from consts import *
 from gamePrints import *
 
 class createLevel():
-    def __init__(self, x, y, entryLoc):
+    def __init__(self, x, y, entryLoc, useOverride=False, exitOverides = []):
         self.exits = [0, 0, 0, 0] # right, left, up, down
         print("abv")
-        
+
         # self.exits = [1,1,1,1] # for testing
         if not os.path.exists(f"saves/1/{x}_{y}"):
             # This absolute mess checks whether the adjacent rooms have already
@@ -55,9 +55,16 @@ class createLevel():
 
         # if the room already exits we can just check what is already saved.
         else:
+            # Room overrides - basically just set cutom exits for stuff like
+            # making the first room always have 4 exits
+            if useOverride:
+                self.exits = exitOverides
+
             with open(f"saves/1/{x}_{y}") as f:
                 lvljson = json.loads(f.read())
                 self.exits = lvljson["exits"]
+
+        
         # set enemy positions
         self.enemies = []
         self.enemies_health = []
