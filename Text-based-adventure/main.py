@@ -24,10 +24,6 @@ if not os.path.exists("saves/1/"):
 curses.curs_set(False)  # hide cursor
 screen.keypad(True)  # use keypad (needed for arrow keys)
 curses.noecho()  # don't print keys pressed to screen
-<<<<<<< HEAD
-=======
-
->>>>>>> dev
 
 # set up default colour palette (colour pair will be fg colour bg colour based on
 # terminal colour palette)
