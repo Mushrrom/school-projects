@@ -125,10 +125,11 @@ class newPlayer():
 
                         # Fix inventory UI if using the last health flask
                         if self.inventory[INV_COUNTS][sel] == 1:
-                            # Remove 1 from inventory length so user cant 
+                            # Remove 1 from inventory length so user cant
                             # accidently crash the game by going down
                             invLength -= 1
-                            # Clear place where health flask used to be (avoids things looking weird)
+                            # Clear place where health flask used to be (avoids
+                            # things looking weird)
                             screen.addstr(5+sel, 8, "".join(" " for _ in range(27)))
                             # Clear last spot of inventory to avoid an item showing
                             # up twice

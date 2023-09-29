@@ -150,14 +150,15 @@ level = createLevel(0, 0, 1, True, [1, 1, 1, 1])
 level.renderLevel(player)
 
 # test items
-player.pickupItem("test", 40)
-player.pickupItem("test", 3)
-player.pickupItem("test2", 1)
-player.pickupItem("test2", 2)
-player.pickupItem("stick")
+# player.pickupItem("test", 40)
+# player.pickupItem("test", 3)
+# player.pickupItem("test2", 1)
+# player.pickupItem("test2", 2)
+# player.pickupItem("stick")
+#
+# player.pickupItem("health flask I")
 
-player.pickupItem("health flask I")
-
+exploredRooms = 0
 while True:
     key = screen.getch()
 
@@ -198,20 +199,73 @@ while True:
     if level.player_pos[1] == 0:
         currentY += 1
         level = createLevel(currentX, currentY, 0)
+        exploredRooms += 1
     if level.player_pos[1] == 32:
         currentY -= 1
         level = createLevel(currentX, currentY, 1)
+        exploredRooms += 1
     if level.player_pos[0] == 0:
         currentX += 1
         level = createLevel(currentX, currentY, 2)
+        exploredRooms += 1
     if level.player_pos[0] == 108:
         currentX -= 1
         level = createLevel(currentX, currentY, 3)
+        exploredRooms += 1
 
     # Update enemies and render level + game info
-    level.updateEnemies()
+    level.updateEnemies(True, ["down"])
     level.renderLevel(player)
     addGameInfo(player, key, tick, currentX, currentY)
 
-screen.getch()
+    # Escape the game loop after 10 rooms explored to go to boss fight
+    if exploredRooms == 2:
+        break
+
+# Boss fight 1:
+
+level = createLevel(99, 99, 2, True, [0, 0, 0, 0])
+bossTick = 0
+while True:
+    key = screen.getch()
+
+    # This handles player movement, it first checks what direction the
+    # player is moving, then checks whether they are going to go into a
+    # wall. And then the elif checks if the wall is actually an exit that
+    # the player can go into. The numbers are because when curses gets a
+    # keyboard input it stores it as a character code
+    match key:
+        case 258:  # move down
+            if not level.player_pos[1] >= 26:
+                level.movePlayer([0, 1], player)
+            elif level.exits[3] == 1 and 51 < level.player_pos[0] < 57:
+                level.movePlayer([0, 1], player, level)
+        case 259:  # move up
+            if not level.player_pos[1] <= 6:
+                level.movePlayer([0, -1], player)
+            elif level.exits[2] == 1 and 51 < level.player_pos[0] < 57:
+                level.movePlayer([0, -1], player, level)
+        case 261:  # Move right
+            if not level.player_pos[0] >= 102:
+                level.movePlayer([1, 0], player)
+            elif level.exits[0] == 1 and 12 < level.player_pos[1] < 18:
+                level.movePlayer([1, 0], player, level)
+        case 260:  # Move left
+            if not level.player_pos[0] <= 6:
+                level.movePlayer([-1, 0], player)
+            elif level.exits[1] == 1 and 12 < level.player_pos[1] < 18:
+                level.movePlayer([-1, 0], player, level)
+        case 105: # key "i" - shows inventory
+            player.showInventory()
+
+    level.updateEnemies(True, ["down"])
+    level.renderLevel(player)
+
+    if bossTick % 27 == 0:
+        for i in range(100):
+            level.enemies.append([6+i, 6])
+            level.enemies_health.append(0)
+
+    bossTick += 1
+    tick += 1
 

@@ -178,30 +178,42 @@ class createLevel():
         screen.refresh()
 
 
-    def updateEnemies(self):
+    def updateEnemies(self, usesBossOverride = False, BossOverrides = []):
         '''updates enemy positions'''
         # this is just horrible nesting
-        for count, _ in enumerate(self.enemies):
-            if random.randint(0, 1) == 1: # move in Y
-                if random.randint(0, 1) == 1:
-                    if self.enemies[count][1] <= 25:
+        if not usesBossOverride:
+            for count, _ in enumerate(self.enemies):
+                if random.randint(0, 1) == 1: # move in Y
+                    if random.randint(0, 1) == 1:
+                        if self.enemies[count][1] <= 25:
 
-                        self.enemies[count][1] += 1
+                            self.enemies[count][1] += 1
+                        else:
+                            self.enemies[count][1] -= 1
                     else:
-                        self.enemies[count][1] -= 1
-                else:
-                    if self.enemies[count][1] >= 7:
-                        self.enemies[count][1] -= 1
+                        if self.enemies[count][1] >= 7:
+                            self.enemies[count][1] -= 1
+                        else:
+                            self.enemies[count][1] += 1
+                else: # move in x
+                    if random.randint(0, 1) == 1:
+                        if self.enemies[count][0] <= 102:
+                            self.enemies[count][0] += 1
+                        else:
+                            self.enemies[count][0] -= 1
                     else:
-                        self.enemies[count][1] += 1
-            else: # move in x
-                if random.randint(0, 1) == 1:
-                    if self.enemies[count][0] <= 102:
-                        self.enemies[count][0] += 1
-                    else:
-                        self.enemies[count][0] -= 1
-                else:
-                    if self.enemies[count][0] >= 6:
-                        self.enemies[count][0] -= 1
-                    else:
-                        self.enemies[count][0] += 1
+                        if self.enemies[count][0] >= 6:
+                            self.enemies[count][0] -= 1
+                        else:
+                            self.enemies[count][0] += 1
+
+        # This makes all enemies go down (for cool boss fight things)
+        if "down" in BossOverrides:
+            for count, i in enumerate(self.enemies):
+                self.enemies[count][1] += 1
+                if i[1] == 27:
+                    self.enemies.pop(count)
+                    self.enemies_health.pop(count)
+                
+                
+
