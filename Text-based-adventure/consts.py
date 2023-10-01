@@ -29,6 +29,10 @@ weaponStats = {
         "base_dmg": 1,
         "modifier": 1
     },
+    "adventurer's dagger": {
+        "base_dmg": 20,
+        "modifier": 20
+    }
 
 }
 
@@ -63,6 +67,10 @@ itemDescriptions = {
                        "Heals between 20 and 50 hp"],
     "health flask IV": ["Health flask I",
                        "Heals between 40 and 70 hp"],
+    "adventurer's dagger": ["Adventurer's dagger",
+                            "A dagger carried by a former adventurer",
+                            "base damage: 20",
+                            "modifier: 20"]
 
 
 

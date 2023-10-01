@@ -6,9 +6,8 @@ from consts import *
 from gamePrints import *
 
 class createLevel():
-    def __init__(self, x, y, entryLoc, useOverride=False, exitOverides = []):
+    def __init__(self, x, y, entryLoc, useOverride=False, exitOverides = [], playerOverride = []):
         self.exits = [0, 0, 0, 0] # right, left, up, down
-        print("abv")
 
         # self.exits = [1,1,1,1] # for testing
         if not os.path.exists(f"saves/1/{x}_{y}"):
@@ -64,7 +63,7 @@ class createLevel():
                 lvljson = json.loads(f.read())
                 self.exits = lvljson["exits"]
 
-        
+
         # set enemy positions
         self.enemies = []
         self.enemies_health = []
@@ -85,6 +84,9 @@ class createLevel():
             self.player_pos = [107, 15]
         else: # enter from left
             self.player_pos = [2, 15]
+
+        if playerOverride != []:
+            self.player_pos = playerOverride
 
 
     def movePlayer(self, movement, player, level=1):
@@ -132,17 +134,74 @@ class createLevel():
                 player.last_message = f"The enemy attacked you and did {attackDamage} damage"
 
 
-    def renderLevel(self, player):
+    def movePlayerBoss(self, movement, player, level=1):
+        '''move player, takes a list as input and adds that to player pos, and 
+        also calculates damage to enemies. This is a modified version for the
+        boss fights'''
+
+        totalBossHealth = level*200
+        self.player_pos[0] += movement[0]
+        self.player_pos[1] += movement[1]
+
+        # So we can set last message
+        attackedBoss = False
+
+        # Boss coordinates (boss is index 0 in the list of enemies)
+        bossX = self.enemies[0][0]
+        bossY = self.enemies[0][1]
+
+
+        # Checks if the player is touching the bos (the boss is a box so we need
+        # to check around it to see if player is thouching it)
+        if bossX-1 <= self.player_pos[0] <= bossX+1 and bossY-1 <= self.player_pos[1] <= bossY + 1:
+            playerWeaponStats = weaponStats[player.weapon]
+            weaponDamage = playerWeaponStats["base_dmg"] + random.randint(0, playerWeaponStats["modifier"])
+            self.enemies_health[0] -= weaponDamage
+            player.last_message = f"You did {weaponDamage} to the boss"
+
+        # Return true if we killed the enemy
+        if self.enemies_health[0] <= 0:
+            return True
+
+        # Check if hit enemies and calculate damage
+        for count, i in enumerate(self.enemies):
+            if count == 0: continue
+            if self.player_pos[0] == i[0] and self.player_pos[1]==i[1]:
+                damageTaken = random.randint(0, 3*level)
+                player.last_message = f"You took {damageTaken} damage"
+                player.health -= damageTaken
+                attackedBoss = True
+
+                # If its just one of the little things we just remove it after
+                # it has damaged the player
+                self.enemies_health.pop(count)
+                self.enemies.pop(count)
+                player.health -= level
+
+        # Add the boss health to the screen if you didnt just attack the boss
+        if not attackedBoss:
+            bossHealth = self.enemies_health[0]
+            player.last_message = f"Boss health: {bossHealth}/{totalBossHealth}"
+
+        # otherwise return false
+        return False
+
+
+    def renderLevel(self, player, bossEnemies = False):
         '''Renders the level including player and enemies'''
         screen.clear()
         print_borders()
 
         # Add the walls for the level
+
+        # top+bottom borders
         border = ''.join("#" for _ in range(106))
         for i in range(1, 6):
             screen.addstr(i, 1, border)
         for i in range(1, 6):
             screen.addstr(32-i, 1, border)
+
+        # side borders
         border = "#####"
         for i in range(1, 31):
             screen.addstr(i, 1, border)
@@ -167,8 +226,29 @@ class createLevel():
         screen.addstr(self.player_pos[1], self.player_pos[0], "☺", curses.color_pair(31))
 
         # add enemies to screen
-        for i in self.enemies:
-            screen.addstr(i[1], i[0], "☹", curses.color_pair(51))
+        if not bossEnemies:  # Normal room enemies (just use sad face)
+            for i in self.enemies:
+                screen.addstr(i[1], i[0], "☹", curses.color_pair(51))
+
+        else:
+            for count, i in enumerate(self.enemies):
+                if count == 0:
+                    # The boss is just a red box with a hole in the middle. 
+                    # This renders that box
+                    screen.addstr(i[1]-1, i[0]-1, "█▋▋", curses.color_pair(55))
+                    screen.addstr(i[1], i[0]-1, "█▋▋", curses.color_pair(55))
+                    screen.addstr(i[1]+1, i[0]-1, "▋▋█", curses.color_pair(55))
+
+                    # And this renders the hole in the middle
+                    screen.addstr(i[1], i[0], "█", curses.color_pair(11))
+                else:
+                    screen.addstr(i[1], i[0], "█", curses.color_pair(51))
+
+
+
+
+
+
 
 
         # add last message to screen for attacking and stuff
@@ -180,36 +260,64 @@ class createLevel():
 
     def updateEnemies(self, usesBossOverride = False, BossOverrides = []):
         '''updates enemy positions'''
-        # this is just horrible nesting
+        # this is just horrible code
         if not usesBossOverride:
             for count, _ in enumerate(self.enemies):
                 if random.randint(0, 1) == 1: # move in Y
                     if random.randint(0, 1) == 1:
-                        if self.enemies[count][1] <= 25:
+                        if self.enemies[count][1] <= 24:
 
                             self.enemies[count][1] += 1
                         else:
                             self.enemies[count][1] -= 1
                     else:
-                        if self.enemies[count][1] >= 7:
+                        if self.enemies[count][1] >= 8:
                             self.enemies[count][1] -= 1
                         else:
                             self.enemies[count][1] += 1
                 else: # move in x
                     if random.randint(0, 1) == 1:
-                        if self.enemies[count][0] <= 102:
+                        if self.enemies[count][0] <= 101:
                             self.enemies[count][0] += 1
                         else:
                             self.enemies[count][0] -= 1
                     else:
-                        if self.enemies[count][0] >= 6:
+                        if self.enemies[count][0] >= 7:
                             self.enemies[count][0] -= 1
                         else:
                             self.enemies[count][0] += 1
 
         # This makes all enemies go down (for cool boss fight things)
-        if "down" in BossOverrides:
+        if "down" in BossOverrides: # this code makes pylint really unhappy
             for count, i in enumerate(self.enemies):
+                # Index 0 means its the boss. This just uses the random enemy
+                # movment. Moving towards the player would just make it too hard
+                if count == 0:
+                    if random.randint(0, 1) == 1: # move in Y
+                        if random.randint(0, 1) == 1:
+                            if self.enemies[count][1] <= 25:
+
+                                self.enemies[count][1] += 1
+                            else:
+                                self.enemies[count][1] -= 1
+                        else:
+                            if self.enemies[count][1] >= 7:
+                                self.enemies[count][1] -= 1
+                            else:
+                                self.enemies[count][1] += 1
+                    else: # move in x
+                        if random.randint(0, 1) == 1:
+                            if self.enemies[count][0] <= 102:
+                                self.enemies[count][0] += 1
+                            else:
+                                self.enemies[count][0] -= 1
+                        else:
+                            if self.enemies[count][0] >= 6:
+                                self.enemies[count][0] -= 1
+                            else:
+                                self.enemies[count][0] += 1
+                    continue
+
                 self.enemies[count][1] += 1
                 if i[1] == 27:
                     self.enemies.pop(count)
