@@ -17,7 +17,7 @@ from createLevel import createLevel
 
 # Cheat mode (sets health to 99,999 and gives 50 coins). Dont use health flask
 # if using cheat mode or it will reset health to 1000
-CHEAT_MODE = True
+CHEAT_MODE = False
 
 curses.resize_term(35, 110) # resize the terminal to 35x110
 
