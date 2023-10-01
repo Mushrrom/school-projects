@@ -6,6 +6,8 @@ I have tried to explain all curses functions the first time they are used, howev
 ## How to play
 Just run main.py from a command prompt. If on windows 11 you will need to run it from a administrator command prompt because for some reason the default windows 11 terminal doesn't like `curses.resize_term`. If you're on windows 10 you should be all good. I haven't tested on macos/linux but curses is intended for unix so it should work all fine.
 
+To attack enemies you just need to run into them.
+
 If you are running on windows you will need to install the `windows-curses` package.
 ### Main game controls
 | Control | Action |
@@ -23,6 +25,7 @@ If you are running on windows you will need to install the `windows-curses` pack
 | Up arrow | Select higher item in inventory |
 | Down arrow | Select lower item in inventory |
 | Enter | Equip weapon or use item |
+| Esc | Exit inventory |
 
 ## Understanding my project structure
 It's a really bad project structure.

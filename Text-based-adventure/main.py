@@ -17,7 +17,7 @@ from createLevel import createLevel
 
 # Cheat mode (sets health to 99,999 and gives 50 coins). Dont use health flask
 # if using cheat mode or it will reset health to 1000
-CHEAT_MODE = False
+CHEAT_MODE = True
 
 curses.resize_term(35, 110) # resize the terminal to 35x110
 
@@ -241,7 +241,7 @@ while True:
     addGameInfo(player, key, tick, currentX, currentY)
 
     # Escape the game loop after 10 rooms explored to go to boss fight
-    if exploredRooms == 2:
+    if exploredRooms == 10:
         break
 
 # ------------------------------------------
