@@ -8,13 +8,16 @@ from gamePrints import *
 from createPlayer import newPlayer
 from createLevel import createLevel
 
+# I strongly suggest reading the README. It may be easier to see at
+# https://github.com/Mushrrom/school-projects/tree/main/Text-based-adventure
+# because it's much easier to read it on something intended for showing markdown
 
-# game screen size will be 35x110
-# screen_y, screen_x = screen.getmaxyx()
-# if screen_y < 35 or screen_x < 110:
-#     print("screen must be at least 110x35")
-#     sys.exit(1)
+# This game will not run properly in a windows 11 terminal. If you are using
+# windows 11 you either need to run an admin command to prompt or use windows 108
 
+# Cheat mode (sets health to 99,999 and gives 50 coins). Dont use health flask
+# if using cheat mode or it will reset health to 1000
+CHEAT_MODE = False
 
 curses.resize_term(35, 110) # resize the terminal to 35x110
 
@@ -120,6 +123,10 @@ level = 1
 
 # Player (Stores inventory, health, etc. newPlayer is in createPlayer.py)
 player = newPlayer()
+if CHEAT_MODE:
+    player.health = 20000
+    player.pickupItem("coin", 50)
+
 
 # player selects initial weapon
 add_str_center("Choose your weapon (press enter to select)", 5)
@@ -197,7 +204,7 @@ while True:
             if not level.player_pos[0] >= 102:
                 level.movePlayer([1, 0], player, levelNum)
             elif level.exits[0] == 1 and 12 < level.player_pos[1] < 18:
-           time.time()     level.movePlayer([1, 0], player, levelNum)
+                level.movePlayer([1, 0], player, levelNum)
         case 260:  # Move left
             if not level.player_pos[0] <= 6:
                 level.movePlayer([-1, 0], player, levelNum)
@@ -247,6 +254,9 @@ add_str_center("You walk into the room and all of the exits close around you", 3
 add_str_center("[ contunue ]", 5, 18)
 waitUntilEnter()
 level = createLevel(99, 99, 2, True, [0, 0, 0, 0], [50, 25])
+
+add_str_center("[ Continue ]", 18, 18)
+# Reset enemies so the only enemy is the boss. Set boss pos and health
 level.enemies = [[60, 8]]
 level.enemies_health = [200]
 
@@ -360,6 +370,13 @@ while True:
     key = screen.getch()
 
     # This handles player movement, it first checks what direction the
+
+
+# game screen size will be 35x110
+# screen_y, screen_x = screen.getmaxyx()
+# if screen_y < 35 or screen_x < 110:
+#     print("screen must be at least 110x35")
+#     sys.exit(1)
     # player is moving, then checks whether they are going to go into a
     # wall. And then the elif checks if the wall is actually an exit that
     # the player can go into. The numbers are because when curses gets a
@@ -380,7 +397,7 @@ while True:
                 level.movePlayer([1, 0], player, levelNum)
             elif level.exits[0] == 1 and 12 < level.player_pos[1] < 18:
                 level.movePlayer([1, 0], player, levelNum)
-        case 260:  # Move left
+        case 260:  # Mo           time.time()ve left
             if not level.player_pos[0] <= 6:
                 level.movePlayer([-1, 0], player, levelNum)
             elif level.exits[1] == 1 and 12 < level.player_pos[1] < 18:
@@ -388,6 +405,13 @@ while True:
         case 105: # key "i" - shows inventory
             player.showInventory()
 
+
+
+# game screen size will be 35x110
+# screen_y, screen_x = screen.getmaxyx()
+# if screen_y < 35 or screen_x < 110:
+#     print("screen must be at least 110x35")
+#     sys.exit(1)
     tick += 1
 
     # checks if the player should be moving to a different room, and moves
@@ -411,6 +435,13 @@ while True:
         exploredRooms += 1
 
     # Update enemies and render level + game info
+
+
+# game screen size will be 35x110
+# screen_y, screen_x = screen.getmaxyx()
+# if screen_y < 35 or screen_x < 110:
+#     print("screen must be at least 110x35")
+#     sys.exit(1)
     level.updateEnemies()
     level.renderLevel(player)
     addGameInfo(player, key, tick, currentX, currentY)
@@ -517,8 +548,15 @@ if sel == 0:
         add_str_center("You dont have any coins to give", 14)
         screen.getch()
     else:
-        amountOfCoins = player.inventory[0][player.inventory[1].index("coin")]
+        amountOfCoins = player.inventory[1][player.inventory[0].index("coin")]
         if amountOfCoins < 20:
+
+
+# game screen size will be 35x110
+# screen_y, screen_x = screen.getmaxyx()
+# if screen_y < 35 or screen_x < 110:
+#     print("screen must be at least 110x35")
+#     sys.exit(1)
             add_str_center("You dont have 20 coins to give :(", 14)
             screen.getch()
         else:
@@ -529,16 +567,18 @@ if sel == 0:
             waitUntilEnter()
             screen.clear()
             add_str_center("All of a sudden he vanishes and where he is sitting there", 15)
-            add_str_center("is a path leading to the next level", 16)
+            add_str_center("is a path leading straight to level 4", 16)
             add_str_center("[ contunue ]", 18, 18)
             waitUntilEnter()
             gaveCoins = True
 else:
     add_str_center("The man looks at you dissapointed", 16)
     add_str_center("[ continue ]", 18, 18)
+    waitUntilEnter()
     screen.clear()
     add_str_center("You decide to contunue your adventure", 16)
     add_str_center("[ continue ]", 18, 18)
+    waitUntilEnter()
     gaveCoins = False
 
 screen.clear()
@@ -546,6 +586,13 @@ screen.clear()
 if not gaveCoins: # if we did give coins then dont do level 3
     screen.clear()
     level = createLevel(0, 0, 1, True, [1, 1, 1, 1])
+
+
+# game screen size will be 35x110
+# screen_y, screen_x = screen.getmaxyx()
+# if screen_y < 35 or screen_x < 110:
+#     print("screen must be at least 110x35")
+#     sys.exit(1)
     level.renderLevel(player)
 
     currentX = 0
@@ -627,8 +674,10 @@ if not gaveCoins: # if we did give coins then dont do level 3
     add_str_center("[ contunue ]", 5, 18)
     waitUntilEnter()
     level = createLevel(99, 99, 2, True, [0, 0, 0, 0], [50, 25])
+
+    # Reset enemies in so just the boss exists
     level.enemies = [[60, 8]]
-    level.enemies_health = [400]
+    level.enemies_health = [600]
 
     bossTick = 0
     while True:
@@ -677,6 +726,13 @@ if not gaveCoins: # if we did give coins then dont do level 3
     add_str_center("The ground falls out and you go to level 4. You can feel that", 15)
     add_str_center("You are close to the demon", 16)
     add_str_center("[ continue ]", 18, 18)
+
+
+# game screen size will be 35x110
+# screen_y, screen_x = screen.getmaxyx()
+# if screen_y < 35 or screen_x < 110:
+#     print("screen must be at least 110x35")
+#     sys.exit(1)
 
 
 
@@ -758,6 +814,8 @@ while True:
     if exploredRooms == 10:
         break
 
+
+screen.clear()
 add_str_center("There's another man sitting on the ground, right in front", 14)
 add_str_center("of a door", 15)
 add_str_center("[ continue ]", 17, 18)
@@ -788,14 +846,16 @@ screen.clear()
 if sel == 0:
     if not "coin" in player.inventory[0]:
         add_str_center("You dont have any coins to give", 14)
-        screen.getch()
+        add_str_center("[ Continue ]", 18, 18)
+        waitUntilEnter()
     else:
-        amountOfCoins = player.inventory[0][player.inventory[1].index("coin")]
-        if amountOfCoins < 20:
-            add_str_center("You dont have 20 coins to give :(", 14)
-            screen.getch()
+        amountOfCoins = player.inventory[1][player.inventory[0].index("coin")]
+        if amountOfCoins < 10:
+            add_str_center("You dont have 10 coins to give :(", 14)
+            add_str_center("[ Continue ]", 18, 18)
+            waitUntilEnter()
         else:
-            player.removeItem("coin", 20)
+            player.removeItem("coin", 10)
 
             add_str_center("He thanks you, and allows you to enter", 14)
             add_str_center("[ contunue ]", 16, 18)
@@ -804,7 +864,8 @@ if sel == 0:
 
 if not gaveCoins:
     add_str_center("The man gets up and kills you. You die", 16)
-    add_str_center("[ Continue ]", 18, 18)
+    add_str_center("[ Quit ]", 18, 18)
+    waitUntilEnter()
     sys.exit()
 
 # ----------------------
@@ -816,7 +877,7 @@ add_str_center("[ contunue ]", 5, 18)
 waitUntilEnter()
 level = createLevel(99, 99, 2, True, [0, 0, 0, 0], [50, 25])
 level.enemies = [[60, 8]]
-level.enemies_health = [400]
+level.enemies_health = [800]
 
 bossTick = 0
 while True:
@@ -969,7 +1030,7 @@ add_str_center("[ contunue ]", 5, 18)
 waitUntilEnter()
 level = createLevel(99, 99, 2, True, [0, 0, 0, 0], [50, 25])
 level.enemies = [[60, 8]]
-level.enemies_health = [400]
+level.enemies_health = [1000]
 # aaaaaaaaaaaaaaaaaaaaa
 
 bossTick = 0
@@ -1022,13 +1083,15 @@ timeTaken = round(time.time() - initialTime)
 
 add_str_center("You defeated the demon!", 14)
 add_str_center("[ Contunue ]", 16, 18)
+waitUntilEnter()
+screen.clear()
 
 add_str_center("Final stats:", 10)
 add_str_center(f"Score: {player.score}", 14)
 add_str_center(f"Ticks taken: {tick}", 16)
 add_str_center(f"Time taken: {timeTaken} seconds", 18)
 
-add_str_center("[ quit ]", 20)
+add_str_center("[ quit ]", 20, 18)
 waitUntilEnter()
 # the end yay :)
 

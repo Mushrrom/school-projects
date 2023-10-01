@@ -186,6 +186,13 @@ class createLevel():
             player.last_message = f"Boss health: {bossHealth}/{totalBossHealth}"
 
         # otherwise return false
+        if player.health <= 0:
+            screen.clear()
+            add_str_center("You died :(", 14)
+            add_str_center("[ quit ]", 16, 18)
+            waitUntilEnter()
+            quit()
+
         return False
 
 
