@@ -139,10 +139,14 @@ class newPlayer():
                         self.removeItem(f"health flask {flaskLevel}", 1)
                         screen.getch()
 
+                    # For explosives
+                    elif self.inventory[INV_ITEMS][sel] == "explosives":
+                        return True
 
 
-                case 27:
-                    break
+
+                case 27: # esc key
+                    return False
 
 
 

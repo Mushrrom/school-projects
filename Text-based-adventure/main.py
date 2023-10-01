@@ -1,6 +1,7 @@
 import sys
 import os
 import random
+import time
 
 from consts import * 
 from gamePrints import *
@@ -82,6 +83,7 @@ if sel == 0:
     for f in filelist:
         os.remove(os.path.join("saves/1", f))
 
+startTime = time.time()
 screen.clear()
 print_borders()
 
@@ -162,6 +164,10 @@ else:
     player.pickupItem("stick")
     player.setWeapon("stick")
 
+# Get timstamp at start of game (for calculating time taken)
+initialTime = time.time()
+
+
 screen.clear()
 level = createLevel(0, 0, 1, True, [1, 1, 1, 1])
 level.renderLevel(player)
@@ -191,7 +197,7 @@ while True:
             if not level.player_pos[0] >= 102:
                 level.movePlayer([1, 0], player, levelNum)
             elif level.exits[0] == 1 and 12 < level.player_pos[1] < 18:
-                level.movePlayer([1, 0], player, levelNum)
+           time.time()     level.movePlayer([1, 0], player, levelNum)
         case 260:  # Move left
             if not level.player_pos[0] <= 6:
                 level.movePlayer([-1, 0], player, levelNum)
@@ -507,16 +513,17 @@ while True:
 gaveCoins = False
 screen.clear()
 if sel == 0:
-    if not coins in player.inventory[0]:
+    if not "coin" in player.inventory[0]:
         add_str_center("You dont have any coins to give", 14)
         screen.getch()
     else:
         amountOfCoins = player.inventory[0][player.inventory[1].index("coin")]
         if amountOfCoins < 20:
-            add_str_center("You dont have 20 coins to give :(")
+            add_str_center("You dont have 20 coins to give :(", 14)
             screen.getch()
         else:
             player.removeItem("coin", 20)
+
             add_str_center('"Thank you adventurer"', 16)
             add_str_center("[ continue ]", 18, 18)
             waitUntilEnter()
@@ -524,6 +531,7 @@ if sel == 0:
             add_str_center("All of a sudden he vanishes and where he is sitting there", 15)
             add_str_center("is a path leading to the next level", 16)
             add_str_center("[ contunue ]", 18, 18)
+            waitUntilEnter()
             gaveCoins = True
 else:
     add_str_center("The man looks at you dissapointed", 16)
@@ -684,7 +692,7 @@ currentX = 0
 currentY = 0
 exploredRooms = 0
 
-levelNum = 3
+levelNum = 4
 
 # basically just copied from above
 while True:
@@ -749,4 +757,278 @@ while True:
     # Escape the game loop after 10 rooms explored to go to boss fight
     if exploredRooms == 10:
         break
+
+add_str_center("There's another man sitting on the ground, right in front", 14)
+add_str_center("of a door", 15)
+add_str_center("[ continue ]", 17, 18)
+waitUntilEnter()
+screen.clear()
+add_str_center('He says: "Give me 10 coins. Or else."', 12)
+add_str_center("Give 10 coins", 15, 18)
+add_str_center("Don't give 10 coins", 18)
+
+while True:
+    btn = screen.getch()  # screen.getch gets keyboard input as char code
+    match btn:
+        case 258:  # character code 258 is a down arrow
+            if sel != 1:
+                sel = 1
+                add_str_center("Give 10 coins", 15)
+                add_str_center("Don't give 10 coins", 18, 18)
+        case 259:  # Character code 259 is up arrow
+            if sel != 0:
+                sel = 0
+                add_str_center("Give 10 coins", 15, 18)
+                add_str_center("Don't give 10 coins", 18)
+        case 10:  # Character code 10 is enter
+            break
+
+gaveCoins = False
+screen.clear()
+if sel == 0:
+    if not "coin" in player.inventory[0]:
+        add_str_center("You dont have any coins to give", 14)
+        screen.getch()
+    else:
+        amountOfCoins = player.inventory[0][player.inventory[1].index("coin")]
+        if amountOfCoins < 20:
+            add_str_center("You dont have 20 coins to give :(", 14)
+            screen.getch()
+        else:
+            player.removeItem("coin", 20)
+
+            add_str_center("He thanks you, and allows you to enter", 14)
+            add_str_center("[ contunue ]", 16, 18)
+
+            gaveCoins = True
+
+if not gaveCoins:
+    add_str_center("The man gets up and kills you. You die", 16)
+    add_str_center("[ Continue ]", 18, 18)
+    sys.exit()
+
+# ----------------------
+# Boss fight 4
+# ----------------------
+screen.clear()
+add_str_center("You walk into the room and all of the exits close around you", 3)
+add_str_center("[ contunue ]", 5, 18)
+waitUntilEnter()
+level = createLevel(99, 99, 2, True, [0, 0, 0, 0], [50, 25])
+level.enemies = [[60, 8]]
+level.enemies_health = [400]
+
+bossTick = 0
+while True:
+    key = screen.getch()
+
+    killedBoss = False
+    match key:
+        case 258:  # move down
+            if not level.player_pos[1] >= 26:
+                killedBoss = level.movePlayerBoss([0, 1], player, levelNum)
+            elif level.exits[3] == 1 and 51 < level.player_pos[0] < 57:
+                killedBoss = level.movePlayerBoss([0, 1], player, level)
+        case 259:  # move up
+            if not level.player_pos[1] <= 6:
+                killedBoss = level.movePlayerBoss([0, -1], player, levelNum)
+            elif level.exits[2] == 1 and 51 < level.player_pos[0] < 57:
+                killedBoss = level.movePlayerBoss([0, -1], player, levelNum)
+        case 261:  # Move right
+            if not level.player_pos[0] >= 102:
+                killedBoss = level.movePlayerBoss([1, 0], player, levelNum)
+            elif level.exits[0] == 1 and 12 < level.player_pos[1] < 18:
+                killedBoss = level.movePlayerBoss([1, 0], player, levelNum)
+        case 260:  # Move left
+            if not level.player_pos[0] <= 6:
+                killedBoss = level.movePlayerBoss([-1, 0], player, levelNum)
+            elif level.exits[1] == 1 and 12 < level.player_pos[1] < 18:
+                killedBoss = level.movePlayerBoss([-1, 0], player, levelNum)
+        case 105: # key "i" - shows inventory
+            player.showInventory()
+
+    if killedBoss:
+        break
+    level.updateEnemies(True, ["down"])
+    level.renderLevel(player, True)
+    addGameInfo(player, key, tick, currentX, currentY)
+
+    if bossTick % 10 == 0:
+        for i in range(96):
+            if random.randint(0, 5) != 3:
+                level.enemies.append([6+i, 6])
+                level.enemies_health.append(0)
+
+    bossTick += 1
+    tick += 1
+
+
+screen.clear()
+add_str_center("The adventurer leaves some explosives on the ground. You pick", 14)
+add_str_center("Them up. When you want to go the next room you can use them from", 15)
+add_str_center("your inventory", 16)
+add_str_center("[ continue ]", 18, 18)
+
+player.pickupItem("explosives")
+waitUntilEnter()
+
+screen.clear()
+add_str_center("You find yourself back in the room you started in on this level", 14)
+add_str_center("[ continue ]", 16, 18)
+waitUntilEnter()
+
+
+# ----------------------
+# Level 4 part 2 
+# ----------------------
+
+screen.clear()
+level = createLevel(0, 0, 1, True, [1, 1, 1, 1])
+level.renderLevel(player)
+
+currentX = 0
+currentY = 0
+exploredRooms = 0
+
+levelNum = 4
+
+# basically just copied from above
+while True:
+    key = screen.getch()
+
+    # This handles player movement, it first checks what direction the
+    # player is moving, then checks whether they are going to go into a
+    # wall. And then the elif checks if the wall is actually an exit that
+    # the player can go into. The numbers are because when curses gets a
+    # keyboard input it stores it as a character code
+    usedExplosives = False
+    match key:
+        case 258:  # move down
+            if not level.player_pos[1] >= 26:
+                level.movePlayer([0, 1], player, levelNum)
+            elif level.exits[3] == 1 and 51 < level.player_pos[0] < 57:
+                level.movePlayer([0, 1], player, levelNum)
+        case 259:  # move up
+            if not level.player_pos[1] <= 6:
+                level.movePlayer([0, -1], player, levelNum)
+            elif level.exits[2] == 1 and 51 < level.player_pos[0] < 57:
+                level.movePlayer([0, -1], player, levelNum)
+        case 261:  # Move right
+            if not level.player_pos[0] >= 102:
+                level.movePlayer([1, 0], player, levelNum)
+            elif level.exits[0] == 1 and 12 < level.player_pos[1] < 18:
+                level.movePlayer([1, 0], player, levelNum)
+        case 260:  # Move left
+            if not level.player_pos[0] <= 6:
+                level.movePlayer([-1, 0], player, levelNum)
+            elif level.exits[1] == 1 and 12 < level.player_pos[1] < 18:
+                level.movePlayer([-1, 0], player, levelNum)
+        case 105: # key "i" - shows inventory
+            usedExplosives = player.showInventory()
+
+    tick += 1
+
+    # checks if the player should be moving to a different room, and moves
+    # them to a different room if they are. See createLevel.py for more
+    # info on what this function does
+    if level.player_pos[1] == 0:
+        currentY += 1
+        level = createLevel(currentX, currentY, 0)
+        exploredRooms += 1
+    if level.player_pos[1] == 32:
+        currentY -= 1
+        level = createLevel(currentX, currentY, 1)
+        exploredRooms += 1
+    if level.player_pos[0] == 0:
+        currentX += 1
+        level = createLevel(currentX, currentY, 2)
+        exploredRooms += 1
+    if level.player_pos[0] == 108:
+        currentX -= 1
+        level = createLevel(currentX, currentY, 3)
+        exploredRooms += 1
+
+    # Update enemies and render level + game info
+    level.updateEnemies()
+    level.renderLevel(player)
+    addGameInfo(player, key, tick, currentX, currentY)
+
+    # If used explosives then break to go to final battle
+    if usedExplosives:
+        break
+
+
+# ----------------------
+# final boss fight
+# ----------------------
+
+levelNum = 5
+screen.clear()
+add_str_center("You fall into a room and see the demon in front of you", 3)
+add_str_center("[ contunue ]", 5, 18)
+waitUntilEnter()
+level = createLevel(99, 99, 2, True, [0, 0, 0, 0], [50, 25])
+level.enemies = [[60, 8]]
+level.enemies_health = [400]
+# aaaaaaaaaaaaaaaaaaaaa
+
+bossTick = 0
+while True:
+    key = screen.getch()
+
+    killedBoss = False
+    match key:
+        case 258:  # move down
+            if not level.player_pos[1] >= 26:
+                killedBoss = level.movePlayerBoss([0, 1], player, levelNum)
+            elif level.exits[3] == 1 and 51 < level.player_pos[0] < 57:
+                killedBoss = level.movePlayerBoss([0, 1], player, level)
+        case 259:  # move up
+            if not level.player_pos[1] <= 6:
+                killedBoss = level.movePlayerBoss([0, -1], player, levelNum)
+            elif level.exits[2] == 1 and 51 < level.player_pos[0] < 57:
+                killedBoss = level.movePlayerBoss([0, -1], player, levelNum)
+        case 261:  # Move right
+            if not level.player_pos[0] >= 102:
+                killedBoss = level.movePlayerBoss([1, 0], player, levelNum)
+            elif level.exits[0] == 1 and 12 < level.player_pos[1] < 18:
+                killedBoss = level.movePlayerBoss([1, 0], player, levelNum)
+        case 260:  # Move left
+            if not level.player_pos[0] <= 6:
+                killedBoss = level.movePlayerBoss([-1, 0], player, levelNum)
+            elif level.exits[1] == 1 and 12 < level.player_pos[1] < 18:
+                killedBoss = level.movePlayerBoss([-1, 0], player, levelNum)
+        case 105: # key "i" - shows inventory
+            player.showInventory()
+
+    if killedBoss:
+        break
+    level.updateEnemies(True, ["down"])
+    level.renderLevel(player, True)
+    addGameInfo(player, key, tick, currentX, currentY)
+
+    if bossTick % 10 == 0:
+        for i in range(96):
+            if random.randint(0, 5) != 3:
+                level.enemies.append([6+i, 6])
+                level.enemies_health.append(0)
+
+    bossTick += 1
+    tick += 1
+
+screen.clear()
+
+timeTaken = round(time.time() - initialTime)
+
+add_str_center("You defeated the demon!", 14)
+add_str_center("[ Contunue ]", 16, 18)
+
+add_str_center("Final stats:", 10)
+add_str_center(f"Score: {player.score}", 14)
+add_str_center(f"Ticks taken: {tick}", 16)
+add_str_center(f"Time taken: {timeTaken} seconds", 18)
+
+add_str_center("[ quit ]", 20)
+waitUntilEnter()
+# the end yay :)
 

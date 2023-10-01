@@ -70,7 +70,9 @@ itemDescriptions = {
     "adventurer's dagger": ["Adventurer's dagger",
                             "A dagger carried by a former adventurer",
                             "base damage: 20",
-                            "modifier: 20"]
+                            "modifier: 20"],
+    "explosives": ["Explosives",
+                   "Can be used to make an explosion, sending you down to the next floor"]
 
 
 
