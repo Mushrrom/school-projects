@@ -102,12 +102,12 @@ class createLevel():
                 playerWeaponStats = weaponStats[player.weapon]
                 weaponDamage = playerWeaponStats["base_dmg"] + random.randint(0, playerWeaponStats["modifier"])
                 self.enemies_health[count] -= weaponDamage
-
+                player.score += 10*level
                 # make enemy die if health less than 0
                 if self.enemies_health[count] <= 0:
                     self.enemies_health.pop(count)
                     self.enemies.pop(count)
-
+                    player.score += 100*level
                     # Get stuff for killing enemy
                     if random.randint(0, 3) == 0:  # 1/4 chance to get health flask
                         if level == 1:
@@ -119,7 +119,7 @@ class createLevel():
                         elif level == 4:
                             player.pickupItem("health flask IV")
 
-                        player.last_message = "You killed the enemy and got a health flask I"
+                        player.last_message = "You killed the enemy and got a health flask"
                     else:  # 3/4 chance to get coins
                         coins = random.randint(2, 6)
                         player.pickupItem("coin", coins)
@@ -158,6 +158,8 @@ class createLevel():
             weaponDamage = playerWeaponStats["base_dmg"] + random.randint(0, playerWeaponStats["modifier"])
             self.enemies_health[0] -= weaponDamage
             player.last_message = f"You did {weaponDamage} to the boss"
+
+            player.score += 100*level
 
         # Return true if we killed the enemy
         if self.enemies_health[0] <= 0:
@@ -322,6 +324,7 @@ class createLevel():
                 if i[1] == 27:
                     self.enemies.pop(count)
                     self.enemies_health.pop(count)
-                
-                
+
+
+
 

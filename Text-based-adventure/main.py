@@ -333,8 +333,8 @@ else:
     add_str_center("next level", 19)
     add_str_center("[ contunue ]", 21, 18)
     waitUntilEnter()
-screen.getch()
 
+player.score += 2000
 # ----------------------------
 # Level 2 
 # ----------------------------
@@ -468,4 +468,285 @@ while True:
 
     bossTick += 1
     tick += 1
+screen.clear()
+add_str_center("You defeat the boss and go to the next level", 14)
+add_str_center("[ continue ]", 16, 18)
+waitUntilEnter()
+# ----------------------
+# Level 3
+# ----------------------
+
+levelNum = 3
+screen.clear()
+# person who asks for coins
+add_str_center("You see a man sitting on the ground. You go up to him to see", 14)
+add_str_center("what he is doing here", 15)
+add_str_center("[ continue ]", 17, 18)
+waitUntilEnter()
+screen.clear()
+add_str_center("He says: \"Kind adventurer, could I please have 20 coins?\"", 12)
+add_str_center("Give 20 coins", 15, 18)
+add_str_center("Don't give 20 coins", 18)
+
+while True:
+    btn = screen.getch()  # screen.getch gets keyboard input as char code
+    match btn:
+        case 258:  # character code 258 is a down arrow
+            if sel != 1:
+                sel = 1
+                add_str_center("Give 20 coins", 15)
+                add_str_center("Don't give 20 coins", 18, 18)
+        case 259:  # Character code 259 is up arrow
+            if sel != 0:
+                sel = 0
+                add_str_center("Give 20 coins", 15, 18)
+                add_str_center("Don't give 20 coins", 18)
+        case 10:  # Character code 10 is enter
+            break
+
+gaveCoins = False
+screen.clear()
+if sel == 0:
+    if not coins in player.inventory[0]:
+        add_str_center("You dont have any coins to give", 14)
+        screen.getch()
+    else:
+        amountOfCoins = player.inventory[0][player.inventory[1].index("coin")]
+        if amountOfCoins < 20:
+            add_str_center("You dont have 20 coins to give :(")
+            screen.getch()
+        else:
+            player.removeItem("coin", 20)
+            add_str_center('"Thank you adventurer"', 16)
+            add_str_center("[ continue ]", 18, 18)
+            waitUntilEnter()
+            screen.clear()
+            add_str_center("All of a sudden he vanishes and where he is sitting there", 15)
+            add_str_center("is a path leading to the next level", 16)
+            add_str_center("[ contunue ]", 18, 18)
+            gaveCoins = True
+else:
+    add_str_center("The man looks at you dissapointed", 16)
+    add_str_center("[ continue ]", 18, 18)
+    screen.clear()
+    add_str_center("You decide to contunue your adventure", 16)
+    add_str_center("[ continue ]", 18, 18)
+    gaveCoins = False
+
+screen.clear()
+# rest of level 3:
+if not gaveCoins: # if we did give coins then dont do level 3
+    screen.clear()
+    level = createLevel(0, 0, 1, True, [1, 1, 1, 1])
+    level.renderLevel(player)
+
+    currentX = 0
+    currentY = 0
+    exploredRooms = 0
+
+    levelNum = 3
+
+# basically just copied from above
+    while True:
+        key = screen.getch()
+
+        # This handles player movement, it first checks what direction the
+        # player is moving, then checks whether they are going to go into a
+        # wall. And then the elif checks if the wall is actually an exit that
+        # the player can go into. The numbers are because when curses gets a
+        # keyboard input it stores it as a character code
+        match key:
+            case 258:  # move down
+                if not level.player_pos[1] >= 26:
+                    level.movePlayer([0, 1], player, levelNum)
+                elif level.exits[3] == 1 and 51 < level.player_pos[0] < 57:
+                    level.movePlayer([0, 1], player, levelNum)
+            case 259:  # move up
+                if not level.player_pos[1] <= 6:
+                    level.movePlayer([0, -1], player, levelNum)
+                elif level.exits[2] == 1 and 51 < level.player_pos[0] < 57:
+                    level.movePlayer([0, -1], player, levelNum)
+            case 261:  # Move right
+                if not level.player_pos[0] >= 102:
+                    level.movePlayer([1, 0], player, levelNum)
+                elif level.exits[0] == 1 and 12 < level.player_pos[1] < 18:
+                    level.movePlayer([1, 0], player, levelNum)
+            case 260:  # Move left
+                if not level.player_pos[0] <= 6:
+                    level.movePlayer([-1, 0], player, levelNum)
+                elif level.exits[1] == 1 and 12 < level.player_pos[1] < 18:
+                    level.movePlayer([-1, 0], player, levelNum)
+            case 105: # key "i" - shows inventory
+                player.showInventory()
+
+        tick += 1
+
+        # checks if the player should be moving to a different room, and moves
+        # them to a different room if they are. See createLevel.py for more
+        # info on what this function does
+        if level.player_pos[1] == 0:
+            currentY += 1
+            level = createLevel(currentX, currentY, 0)
+            exploredRooms += 1
+        if level.player_pos[1] == 32:
+            currentY -= 1
+            level = createLevel(currentX, currentY, 1)
+            exploredRooms += 1
+        if level.player_pos[0] == 0:
+            currentX += 1
+            level = createLevel(currentX, currentY, 2)
+            exploredRooms += 1
+        if level.player_pos[0] == 108:
+            currentX -= 1
+            level = createLevel(currentX, currentY, 3)
+            exploredRooms += 1
+
+        # Update enemies and render level + game info
+        level.updateEnemies()
+        level.renderLevel(player)
+        addGameInfo(player, key, tick, currentX, currentY)
+
+        # Escape the game loop after 10 rooms explored to go to boss fight
+        if exploredRooms == 10:
+            break
+
+
+# ----------------------
+# Boss fight 3
+# ----------------------
+    screen.clear()
+    add_str_center("You walk into the room and all of the exits close around you", 3)
+    add_str_center("[ contunue ]", 5, 18)
+    waitUntilEnter()
+    level = createLevel(99, 99, 2, True, [0, 0, 0, 0], [50, 25])
+    level.enemies = [[60, 8]]
+    level.enemies_health = [400]
+
+    bossTick = 0
+    while True:
+        key = screen.getch()
+
+        killedBoss = False
+        match key:
+            case 258:  # move down
+                if not level.player_pos[1] >= 26:
+                    killedBoss = level.movePlayerBoss([0, 1], player, levelNum)
+                elif level.exits[3] == 1 and 51 < level.player_pos[0] < 57:
+                    killedBoss = level.movePlayerBoss([0, 1], player, level)
+            case 259:  # move up
+                if not level.player_pos[1] <= 6:
+                    killedBoss = level.movePlayerBoss([0, -1], player, levelNum)
+                elif level.exits[2] == 1 and 51 < level.player_pos[0] < 57:
+                    killedBoss = level.movePlayerBoss([0, -1], player, levelNum)
+            case 261:  # Move right
+                if not level.player_pos[0] >= 102:
+                    killedBoss = level.movePlayerBoss([1, 0], player, levelNum)
+                elif level.exits[0] == 1 and 12 < level.player_pos[1] < 18:
+                    killedBoss = level.movePlayerBoss([1, 0], player, levelNum)
+            case 260:  # Move left
+                if not level.player_pos[0] <= 6:
+                    killedBoss = level.movePlayerBoss([-1, 0], player, levelNum)
+                elif level.exits[1] == 1 and 12 < level.player_pos[1] < 18:
+                    killedBoss = level.movePlayerBoss([-1, 0], player, levelNum)
+            case 105: # key "i" - shows inventory
+                player.showInventory()
+
+        if killedBoss:
+            break
+        level.updateEnemies(True, ["down"])
+        level.renderLevel(player, True)
+        addGameInfo(player, key, tick, currentX, currentY)
+
+        if bossTick % 10 == 0:
+            for i in range(96):
+                if random.randint(0, 5) != 3:
+                    level.enemies.append([6+i, 6])
+                    level.enemies_health.append(0)
+
+        bossTick += 1
+        tick += 1
+
+    add_str_center("The ground falls out and you go to level 4. You can feel that", 15)
+    add_str_center("You are close to the demon", 16)
+    add_str_center("[ continue ]", 18, 18)
+
+
+
+# ---------------------------
+# Level 4 !!!!!!!
+# ---------------------------
+
+screen.clear()
+level = createLevel(0, 0, 1, True, [1, 1, 1, 1])
+level.renderLevel(player)
+
+currentX = 0
+currentY = 0
+exploredRooms = 0
+
+levelNum = 3
+
+# basically just copied from above
+while True:
+    key = screen.getch()
+
+    # This handles player movement, it first checks what direction the
+    # player is moving, then checks whether they are going to go into a
+    # wall. And then the elif checks if the wall is actually an exit that
+    # the player can go into. The numbers are because when curses gets a
+    # keyboard input it stores it as a character code
+    match key:
+        case 258:  # move down
+            if not level.player_pos[1] >= 26:
+                level.movePlayer([0, 1], player, levelNum)
+            elif level.exits[3] == 1 and 51 < level.player_pos[0] < 57:
+                level.movePlayer([0, 1], player, levelNum)
+        case 259:  # move up
+            if not level.player_pos[1] <= 6:
+                level.movePlayer([0, -1], player, levelNum)
+            elif level.exits[2] == 1 and 51 < level.player_pos[0] < 57:
+                level.movePlayer([0, -1], player, levelNum)
+        case 261:  # Move right
+            if not level.player_pos[0] >= 102:
+                level.movePlayer([1, 0], player, levelNum)
+            elif level.exits[0] == 1 and 12 < level.player_pos[1] < 18:
+                level.movePlayer([1, 0], player, levelNum)
+        case 260:  # Move left
+            if not level.player_pos[0] <= 6:
+                level.movePlayer([-1, 0], player, levelNum)
+            elif level.exits[1] == 1 and 12 < level.player_pos[1] < 18:
+                level.movePlayer([-1, 0], player, levelNum)
+        case 105: # key "i" - shows inventory
+            player.showInventory()
+
+    tick += 1
+
+    # checks if the player should be moving to a different room, and moves
+    # them to a different room if they are. See createLevel.py for more
+    # info on what this function does
+    if level.player_pos[1] == 0:
+        currentY += 1
+        level = createLevel(currentX, currentY, 0)
+        exploredRooms += 1
+    if level.player_pos[1] == 32:
+        currentY -= 1
+        level = createLevel(currentX, currentY, 1)
+        exploredRooms += 1
+    if level.player_pos[0] == 0:
+        currentX += 1
+        level = createLevel(currentX, currentY, 2)
+        exploredRooms += 1
+    if level.player_pos[0] == 108:
+        currentX -= 1
+        level = createLevel(currentX, currentY, 3)
+        exploredRooms += 1
+
+    # Update enemies and render level + game info
+    level.updateEnemies()
+    level.renderLevel(player)
+    addGameInfo(player, key, tick, currentX, currentY)
+
+    # Escape the game loop after 10 rooms explored to go to boss fight
+    if exploredRooms == 10:
+        break
 
