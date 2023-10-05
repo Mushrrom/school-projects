@@ -7,3 +7,5 @@ guessing_game.py
 funcmenu.py
 bottles.py
 __pycache__
+.vscode
+*.pxo
