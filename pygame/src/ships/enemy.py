@@ -2,7 +2,7 @@ import math
 
 import pygame
 
-import mathFunctions
+import src.scripts.mathFunctions
 
 class newEnemy:
     def __init__(self, pos: list | None=[0, 0]):

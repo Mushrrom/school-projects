@@ -2,16 +2,20 @@ import pygame
 from pygame.locals import *
 import pygame.freetype
 
-import handleInput
-import mathFunctions
+import src.scripts.handleInput
+import src.scripts.mathFunctions
 
-import ships.enemy
-import ships.player
+import src.ships.enemy
+import src.ships.player
 
 # pygame setup
 pygame.init()
 pygame.display.set_caption("test game")
 clock = pygame.time.Clock()
+
+# ANCHOR - other setup
+inputHandler = handleInput.inputHandler()
+player = ships.player.newPlayer()
 
 # consts
 SCREEN_WIDTH = 640
@@ -22,15 +26,11 @@ GAME_FONT = pygame.freetype.Font("assets/bauhaus.ttf", 24)
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-
-
-
 gameLoop = True
 
 # ships (debug for now)
 newEnemy = ships.enemy.newEnemy()
 newEnemy2 = ships.enemy.newEnemy(pos=[250, 250])
-player = ships.player.newPlayer()
 
 # keys:
 keyLeft = False
@@ -38,7 +38,8 @@ keyRight = False
 keyUp = False
 keyDown = False
 
-inputHandler = handleInput.inputHandler()
+#ANCHOR - game
+
 while gameLoop:
     screen.fill(BG)
     [gameLoop, keyUp, keyDown, keyLeft, keyRight] = inputHandler.handleInput()
