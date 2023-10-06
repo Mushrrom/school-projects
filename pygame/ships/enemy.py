@@ -5,9 +5,11 @@ import pygame
 import mathFunctions
 
 class newEnemy:
-    def __init__(self):
-        self.position = [0, 0]
-        self.image = pygame.transform.scale_by(pygame.image.load("enemy.png"), 2)
+    def __init__(self, pos: list | None=[0, 0]):
+
+
+        self.position = pos
+        self.image = pygame.transform.scale_by(pygame.image.load("assets/enemy.png"), 2)
         self.rect = self.image.get_rect()
         self.angle = 0
 
