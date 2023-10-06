@@ -13,7 +13,7 @@ class inputHandler():
         gameLoop = True
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                gameLoop = False
+                pygame.quit()
 
             if event.type == KEYDOWN:
                 if event.key == K_LEFT:

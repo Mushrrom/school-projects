@@ -1,5 +1,5 @@
 import pygame
-
+import pygame.freetype
 import src.scripts.handleInput
 from src.ships import enemy, player
 
@@ -9,6 +9,7 @@ def gameLoop(screen):
     # ANCHOR - other setup
     inputHandler = src.scripts.handleInput.inputHandler()
     player = src.ships.player.newPlayer()
+
     playing = True
 
     clock = pygame.time.Clock()
