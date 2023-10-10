@@ -1,6 +1,7 @@
 import pygame
 import math
 
+from src.consts import *
 
 class newPlayer():
     def __init__(self):
@@ -50,18 +51,19 @@ class newPlayer():
         self.position[0] += xDist
         self.position[1] += yDist
 
-        if self.position[0] > 640:
-            self.position[0] = 0
-        elif self.position[0] < 0:
-            self.position[0] = 640
+        # if self.position[0] > 640:
+        #     self.position[0] = 0
+        # elif self.position[0] < 0:
+        #     self.position[0] = 640
 
-        if self.position[1] > 480:
-            self.position[1] = 0
-        elif self.position[1] < 0:
-            self.position[1] = 480
+        # if self.position[1] > 480:
+        #     self.position[1] = 0
+        # elif self.position[1] < 0:
+        #     self.position[1] = 480
 
     def render(self, screen):
         rotatedImage = pygame.transform.rotate(self.img, self.angle)
 
         self.rect = rotatedImage.get_rect(center = self.img.get_rect(center = (self.position[0], self.position[1])).center)
-        screen.blit(rotatedImage, self.rect)
+        renderRect = rotatedImage.get_rect(center = self.img.get_rect(center = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2)).center)
+        screen.blit(rotatedImage, renderRect)
