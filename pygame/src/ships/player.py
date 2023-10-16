@@ -22,17 +22,9 @@ class newPlayer():
 
     def updateMovement(self, keyUp, keyDown, keyLeft, keyRight):
         if keyLeft == True:
-            # if self.rotationAmount < 1:
-            #     self.rotationAmount += 0.4
-            # else:
-            #     self.rotationAmount += 0.1
             self.angle += 7
 
         if keyRight == True:
-            # if self.rotationAmount > -1:
-            #     self.rotationAmount -= 0.4
-            # else:
-            #     self.rotationAmount -= 0.1
             self.angle -= 7
 
         if keyUp == True:
@@ -42,28 +34,28 @@ class newPlayer():
             self.speed -= 0.15
             self.speed = max(self.speed, 0)
 
+
     def move(self):
+        # Change angle
         self.angle += self.rotationAmount
 
+        # Calculate how far to move in both directions (this is basically what i was just doing
+        # in physics lol)
         xDist = -1*math.sin(self.angle*math.pi/180)*self.speed
         yDist = -1*math.cos(self.angle*math.pi/180)*self.speed
 
+        # add that to the position
         self.position[0] += xDist
         self.position[1] += yDist
 
-        # if self.position[0] > 640:
-        #     self.position[0] = 0
-        # elif self.position[0] < 0:
-        #     self.position[0] = 640
-
-        # if self.position[1] > 480:
-        #     self.position[1] = 0
-        # elif self.position[1] < 0:
-        #     self.position[1] = 480
 
     def render(self, screen):
+        # Rotate player image
         rotatedImage = pygame.transform.rotate(self.img, self.angle)
 
+        # Rect of self for colission calculations
         self.rect = rotatedImage.get_rect(center = self.img.get_rect(center = (self.position[0], self.position[1])).center)
+
+        # Rect that will render to center of screen for what the person sees
         renderRect = rotatedImage.get_rect(center = self.img.get_rect(center = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2)).center)
         screen.blit(rotatedImage, renderRect)
