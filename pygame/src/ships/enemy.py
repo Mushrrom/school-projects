@@ -2,6 +2,7 @@ import math
 
 import pygame
 
+from src.consts import *
 import src.scripts.mathFunctions as mathFunctions
 
 class newEnemy:
@@ -33,6 +34,11 @@ class newEnemy:
 
 
     def renderEnemy(self, screen):
+        """Renders the enemy to the enemy surface
+
+        Args:
+            screen (pygame.surface): The surface to render the enemy to
+        """
         rotatedImage = pygame.transform.rotate(self.image, self.angle)
         self.rect = rotatedImage.get_rect(center = self.image.get_rect(center = (self.position[0], self.position[1])).center)
 
@@ -41,6 +47,12 @@ class newEnemy:
         screen.blit(rotatedImage, self.rect)
 
     def rotateEnemy(self, playerX, playerY):
+        """Rotates the enemy towards the player
+
+        Args:
+            playerX (int|float): Player x position
+            playerY (int|float): Player y position
+        """
         angleToPlayer = mathFunctions.getAngle(self.position[0], self.position[1],
                                                playerX, playerY)
 
@@ -68,4 +80,10 @@ class newEnemy:
         if self.angle > 360:
             self.angle -= 360
 
+    def clearEnemy(self, screen):
+        """Clears where the enemy used to be on the screen
 
+        Args:
+            screen (_type_): _description_
+        """
+        pygame.draw.rect(screen, CLEAR, (self.position[0]-20, self.position[1]-20, 40, 40))

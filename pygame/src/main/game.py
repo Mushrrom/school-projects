@@ -15,28 +15,35 @@ def gameLoop(screen):
     inputHandler = src.scripts.handleInput.inputHandler()
     player = src.ships.player.newPlayer()
 
+    # starsSurf is the surface of stars that moves with the player
     starsSurf = pygame.Surface((10000, 10000)).convert_alpha()
     starsSurf.fill(CLEAR)
 
-    # Debug stars (god is this slow)
-    # for i in range(100):
-    #     for j in range(100):
-    #         pygame.draw.rect(starsSurf, (255, 255,255), (i*100, j*100, 10, 10))
-
-    # Stars for the main stars bg (one that moves with player)
     for _ in range(500_000):
         starX = random.randint(0, 99990)
         starY = random.randint(0, 99990)
         pygame.draw.circle(starsSurf, (255, 255,255), (starX, starY), 4)
 
+    # startSurf2 is the surface of the stars that move at 1/2 the speed of the player
+    # for the parallax effect
     starsSurf2 = pygame.Surface((10000, 10000)).convert_alpha()
     starsSurf2.fill(CLEAR)
 
-    for _ in range(500_000):
-        starX = random.randint(0, 99990)
-        starY = random.randint(0, 99990)
-        pygame.draw.circle(starsSurf2, (180, 180,180), (starX, starY), 2)
+    for _ in range(125_000):
+        starX = random.randint(0, 49995)
+        starY = random.randint(0, 49995)
+        pygame.draw.circle(starsSurf2, (190, 190,190), (starX, starY), 2)
 
+
+    # startSurf2 is the surface of the stars that move at 1/2 the speed of the player
+    # for the parallax effect
+    starsSurf3 = pygame.Surface((10000, 10000)).convert_alpha()
+    starsSurf3.fill(CLEAR)
+
+    for _ in range(62_500):
+        starX = random.randint(0, 24998)
+        starY = random.randint(0, 24998)
+        pygame.draw.circle(starsSurf3, (150, 150, 150), (starX, starY), 1)
     playing = True
 
     clock = pygame.time.Clock()
@@ -57,6 +64,10 @@ def gameLoop(screen):
         # TODO:
         # [ ] Move this to its own function and iterate through them
         surfaceNew = CLEAR_SURFACE
+
+        newEnemy.clearEnemy(surfaceNew)
+        newEnemy2.clearEnemy(surfaceNew)
+
         newEnemy.rotateEnemy(player.position[0], player.position[1])
         newEnemy.moveEnemy(6)
         newEnemy.renderEnemy(surfaceNew)
@@ -73,6 +84,7 @@ def gameLoop(screen):
         #                 pygame.draw.rect(surface, (255, 255,255), (i*100, j*100, 10, 10))
 
         GAME_FONT.render_to(screen, (0, 0), f"fps: {round(clock.get_fps())}", (255, 255, 255))
+        screen.blit(starsSurf3, (-(player.position[0]//4-SCREEN_WIDTH//2), -(player.position[1]//4-SCREEN_HEIGHT//2)))
         screen.blit(starsSurf2, (-(player.position[0]//2-SCREEN_WIDTH//2), -(player.position[1]//2-SCREEN_HEIGHT//2)))
 
         screen.blit(starsSurf, (-(player.position[0]-SCREEN_WIDTH//2), -(player.position[1]-SCREEN_HEIGHT//2)))
