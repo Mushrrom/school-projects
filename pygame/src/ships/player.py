@@ -17,6 +17,9 @@ class newPlayer():
         self.img = pygame.transform.scale_by(pygame.image.load("assets/test_image.png"), 2)
         self.rect = self.img.get_rect()
 
+        # Health amount
+        self.health = 100
+
         # debug
         print(f"DEBUG: center = {self.rect.center}")
 

@@ -5,16 +5,18 @@ import pygame
 import pygame.freetype
 import src.scripts.handleInput
 from src.ships import enemy, player
-
+import src.scripts.updateEntities
 from src.consts import *
 
 CLEAR_SURFACE = pygame.Surface((10000, 10000)).convert_alpha()
 CLEAR_SURFACE.fill(CLEAR)
+
+
 def gameLoop(screen):
     # ANCHOR - other setup
     inputHandler = src.scripts.handleInput.inputHandler()
     player = src.ships.player.newPlayer()
-
+    # hello
     # starsSurf is the surface of stars that moves with the player
     starsSurf = pygame.Surface((10000, 10000)).convert_alpha()
     starsSurf.fill(CLEAR)
@@ -23,6 +25,13 @@ def gameLoop(screen):
         starX = random.randint(0, 99990)
         starY = random.randint(0, 99990)
         pygame.draw.circle(starsSurf, (255, 255,255), (starX, starY), 4)
+
+    # -- Draws the vertical and horizontal walls to the first star surface
+    pygame.draw.rect(starsSurf, (127, 127, 127), (0, 0, 20, 10000)) # Left vertical
+    pygame.draw.rect(starsSurf, (127, 127, 127), (9_980, 0, 10_000, 10_000)) # Right vertical
+
+    pygame.draw.rect(starsSurf, (127, 127, 127), (0, 0, 10_000, 20)) # Top horizontal
+    pygame.draw.rect(starsSurf, (127, 127, 127), (0, 9_980, 10_000, 10_000)) # top vertical
 
     # startSurf2 is the surface of the stars that move at 1/2 the speed of the player
     # for the parallax effect
@@ -51,50 +60,42 @@ def gameLoop(screen):
     GAME_FONT = pygame.freetype.Font("assets/bauhaus.ttf", 24)
 
     # ships (debug for now)
-    newEnemy = src.ships.enemy.newEnemy()
-    newEnemy2 = src.ships.enemy.newEnemy(pos=[250, 250])
+    enemiesList = [src.ships.enemy.newEnemy(), src.ships.enemy.newEnemy(pos=[250, 250])]
+    # newEnemy = src.ships.enemy.newEnemy()
+    # newEnemy2 = src.ships.enemy.newEnemy(pos=[250, 250])
 
-    surface = pygame.Surface((10000, 10000)).convert_alpha()
-    surface.fill(CLEAR)
+    enemiesSurface = pygame.Surface((10000, 10000)).convert_alpha()
+    enemiesSurface.fill(CLEAR)
+
+    bulletsList = []
 
     while playing:
         screen.fill(BG)
         [playing, keyUp, keyDown, keyLeft, keyRight] = inputHandler.handleInput()
 
         # TODO:
-        # [ ] Move this to its own function and iterate through them
-        surfaceNew = CLEAR_SURFACE
+        # [X] Move this to its own function and iterate through them
 
-        newEnemy.clearEnemy(surfaceNew)
-        newEnemy2.clearEnemy(surfaceNew)
+        print(player.health, flush=True)
 
-        newEnemy.rotateEnemy(player.position[0], player.position[1])
-        newEnemy.moveEnemy(6)
-        newEnemy.renderEnemy(surfaceNew)
+        bulletsList = src.scripts.updateEntities.updateEnemies(enemiesList, enemiesSurface, player, bulletsList)
+        bulletsList = src.scripts.updateEntities.updateBullets(bulletsList, enemiesSurface, enemiesList, player)
 
-        newEnemy2.rotateEnemy(player.position[0], player.position[1])
-        newEnemy2.moveEnemy(6)
-        newEnemy2.renderEnemy(surfaceNew)
-
-        # # Debug stars (god is this slow2)
-        # for i in range(100):
-        #     for j in range(100):
-        #         if player.position[0] - SCREEN_WIDTH//2 - 0 < i*100 < player.position[0]+SCREEN_WIDTH//2 + 0:
-        #             if player.position[1] - SCREEN_HEIGHT//2 - 0 < j*100 < player.position[1]+SCREEN_HEIGHT//2 + 0:
-        #                 pygame.draw.rect(surface, (255, 255,255), (i*100, j*100, 10, 10))
-
-        GAME_FONT.render_to(screen, (0, 0), f"fps: {round(clock.get_fps())}", (255, 255, 255))
-        screen.blit(starsSurf3, (-(player.position[0]//4-SCREEN_WIDTH//2), -(player.position[1]//4-SCREEN_HEIGHT//2)))
-        screen.blit(starsSurf2, (-(player.position[0]//2-SCREEN_WIDTH//2), -(player.position[1]//2-SCREEN_HEIGHT//2)))
-
+        # Render the stars to the screen. Renders the furthest one first and so on
+        screen.blit(starsSurf3, (-(player.position[0]//4+SCREEN_WIDTH//2), -(player.position[1]//4+SCREEN_HEIGHT//2)))
+        screen.blit(starsSurf2, (-(player.position[0]//2+SCREEN_WIDTH//2), -(player.position[1]//2+SCREEN_HEIGHT//2)))
         screen.blit(starsSurf, (-(player.position[0]-SCREEN_WIDTH//2), -(player.position[1]-SCREEN_HEIGHT//2)))
 
-        screen.blit(surfaceNew, (-(player.position[0]-SCREEN_WIDTH//2), -(player.position[1]-SCREEN_HEIGHT//2)))
+        # Render the enemies to the screen
+        screen.blit(enemiesSurface, (-(player.position[0]-SCREEN_WIDTH//2), -(player.position[1]-SCREEN_HEIGHT//2)))
 
+        # Update player movement and render player to screen
         player.updateMovement(keyUp, keyDown, keyLeft, keyRight)
         player.move()
         player.render(screen)
 
+        # Add FPS counter to screen
+        GAME_FONT.render_to(screen, (0, 0), f"fps: {round(clock.get_fps())}", (255, 255, 255))
         pygame.display.update()
 
         clock.tick(FPS)

@@ -10,7 +10,6 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 import src.main.game as game
 
-
 gameLoop = True
 while gameLoop:
     option = src.menus.mainMenu.renderMenu(screen)

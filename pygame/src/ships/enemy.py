@@ -13,6 +13,7 @@ class newEnemy:
         self.image = pygame.transform.scale_by(pygame.image.load("assets/enemy.png"), 2)
         self.rect = self.image.get_rect()
         self.angle = 0
+        self.frames = 0 # Amount of frames the enemy has existed for
 
     def moveEnemy(self, distance):
         """_summary_
@@ -81,6 +82,7 @@ class newEnemy:
             self.angle -= 360
 
     def clearEnemy(self, screen):
+        self.frames += 1
         """Clears where the enemy used to be on the screen
 
         Args:
