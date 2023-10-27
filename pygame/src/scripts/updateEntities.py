@@ -12,12 +12,16 @@ def updateEnemies(enemiesList, enemiesSurface, player, bulletsList):
         enemy.renderEnemy(enemiesSurface)
         if enemy.frames % 30 == 0:
             bulletsList.append(src.ships.bullet.newBullet([enemy.position[0], enemy.position[1]],
-                                                          50, enemy.angle, "enemy"))
+                                                          30, enemy.angle, "enemy"))
 
     return bulletsList
 
 def updateBullets(bulletsList, enemiesSurface, enemiesList, player):
+    print("------------------------------------")
+
     for count, bullet in enumerate(bulletsList):
+        print(bullet.origin)
+
         bullet.clearBullet(enemiesSurface)
         bullet.moveBullet()
         bullet.checkCollisions(player, enemiesList)

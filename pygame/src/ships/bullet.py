@@ -8,9 +8,8 @@ class newBullet():
         """bullet
 
         Args:
-            startX (int): Starting X of bullet
-            startY (int): Starting Y of bullet
-            speed (int|float): Speed of bulle
+            startPos (list): start x and y position of the bullet
+            speed (int|float): Speed of bullet
             direction (int|float): Direction the bullet will be traveling in
             origin (str): Origin of the bullet (Can be "player" or "enemy") to prevent friendly fire
         """

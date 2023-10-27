@@ -71,7 +71,7 @@ def gameLoop(screen):
 
     while playing:
         screen.fill(BG)
-        [playing, keyUp, keyDown, keyLeft, keyRight] = inputHandler.handleInput()
+        [playing, keyUp, keyDown, keyLeft, keyRight, keyC] = inputHandler.handleInput()
 
         # TODO:
         # [X] Move this to its own function and iterate through them
@@ -88,6 +88,9 @@ def gameLoop(screen):
 
         # Render the enemies to the screen
         screen.blit(enemiesSurface, (-(player.position[0]-SCREEN_WIDTH//2), -(player.position[1]-SCREEN_HEIGHT//2)))
+
+        if keyC:
+            bulletsList.append(player.shootBullet())
 
         # Update player movement and render player to screen
         player.updateMovement(keyUp, keyDown, keyLeft, keyRight)

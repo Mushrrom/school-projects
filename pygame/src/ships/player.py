@@ -3,6 +3,7 @@ import math
 
 from src.consts import *
 
+import src.ships.bullet
 class newPlayer():
     def __init__(self):
         # player values for amount to move
@@ -62,3 +63,12 @@ class newPlayer():
         # Rect that will render to center of screen for what the person sees
         renderRect = rotatedImage.get_rect(center = self.img.get_rect(center = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2)).center)
         screen.blit(rotatedImage, renderRect)
+
+    def shootBullet(self):
+        bulletPos = self.position[:]
+        bulletSpeed = self.speed+30
+        bulletAngle = self.angle+0
+        bullet = src.ships.bullet.newBullet(bulletPos, bulletSpeed, bulletAngle, "player")
+
+        print(bullet.speed)
+        return bullet
