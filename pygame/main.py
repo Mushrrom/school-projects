@@ -2,6 +2,7 @@ import pygame
 
 from src.consts import *
 import src.menus.mainMenu
+
 # pygame setup
 pygame.init()
 pygame.display.set_caption("SpaceWar!2")

@@ -3,7 +3,18 @@ import pygame_gui
 import pygame.freetype
 
 from src.consts import *
-def renderMenu(screen):
+def renderMenu(screen: pygame.surface):
+    """Makes the main menu
+
+    Args:
+        screen (pygame.surface): screen to render the menu to
+
+    Returns:
+        str: What to do after the menu
+    """
+
+    # TODO -
+    # [ ] Make this use arrow keys to select instead of mouse
     pygame.freetype.init()
     guiManager =  pygame_gui.UIManager((800, 600))
 

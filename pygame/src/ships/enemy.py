@@ -1,4 +1,5 @@
 import math
+from typing import Union
 
 import pygame
 
@@ -6,20 +7,34 @@ from src.consts import *
 import src.scripts.mathFunctions as mathFunctions
 
 class newEnemy:
+    """Class to represent an enemy
+
+    Attributes:
+        position: (list): Current position of the enemy.
+        angle (int): Current angle of the enemy.
+        image (pygame.image): The image of the enemy.
+        rect (pygame.Rect): The enemy's rect (Used for collisions).
+        frames (int): The amount of frames the enemy has existed for.
+
+    Attributes:
+        pos (list): The position to start the enemy at
+    """
     def __init__(self, pos: list | None=[0, 0]):
 
 
         self.position = pos
+        self.angle = 0
         self.image = pygame.transform.scale_by(pygame.image.load("assets/enemy.png"), 2)
         self.rect = self.image.get_rect()
-        self.angle = 0
+
+
         self.frames = 0 # Amount of frames the enemy has existed for
 
-    def moveEnemy(self, distance):
+    def moveEnemy(self, distance: Union[int, float]):
         """_summary_
 
         Args:
-            distance (float/int): distance to move
+            distance (float, int): distance to move
 
         Returns:
             _type_: _description_
@@ -34,7 +49,7 @@ class newEnemy:
         self.position[1] += yDist
 
 
-    def renderEnemy(self, screen):
+    def renderEnemy(self, screen: pygame.surface):
         """Renders the enemy to the enemy surface
 
         Args:
@@ -47,7 +62,7 @@ class newEnemy:
 
         screen.blit(rotatedImage, self.rect)
 
-    def rotateEnemy(self, playerX, playerY):
+    def rotateEnemy(self, playerX: Union[int, float], playerY: Union[int, float]):
         """Rotates the enemy towards the player
 
         Args:
@@ -81,7 +96,7 @@ class newEnemy:
         if self.angle > 360:
             self.angle -= 360
 
-    def clearEnemy(self, screen):
+    def clearEnemy(self, screen: pygame.surface):
         self.frames += 1
         """Clears where the enemy used to be on the screen
 

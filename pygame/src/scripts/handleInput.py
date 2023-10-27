@@ -3,6 +3,15 @@ from pygame.locals import *
 
 
 class inputHandler():
+    """Class for handling inputs
+
+    Attributes:
+        keyUp (bool): Whether the key up is currently pressed.
+        keyDown (bool): Whether the key down is currently pressed.
+        keyLeft (bool): Whether the key left is currently pressed.
+        keyRight (bool): Whether the key right is currently pressed.
+
+    """
     def __init__(self):
         self.keyLeft = False
         self.keyRight = False
@@ -10,6 +19,12 @@ class inputHandler():
         self.keyDown = False
 
     def handleInput(self):
+        """Handles what keys have been pressed
+
+        Returns:
+            bool: gameloop is whether to keep running the game, the rest are the current values of
+                the keys
+        """
         gameLoop = True
         keyC = False
         for event in pygame.event.get():

@@ -1,6 +1,19 @@
+import pygame
+
 import src.ships.bullet
 
-def updateEnemies(enemiesList, enemiesSurface, player, bulletsList):
+def updateEnemies(enemiesList: list, enemiesSurface: pygame.surface, player: src.ships.player.newPlayer, bulletsList: list):
+    """Updates the enemies positions & shoots bullets from enemies
+
+    Args:
+        enemiesList (list): the list of enemies currently in the game.
+        enemiesSurface (pygame.surface): The surface to render the enemies to.
+        player (src.ships.player.newPlayer): The player object.
+        bulletsList (list): The list of bullets in the game.
+
+    Returns:
+        list: The updated bullets list
+    """
 
     # Clear the enemies from the surface
     for enemy in enemiesList:
@@ -16,8 +29,18 @@ def updateEnemies(enemiesList, enemiesSurface, player, bulletsList):
 
     return bulletsList
 
-def updateBullets(bulletsList, enemiesSurface, enemiesList, player):
-    print("------------------------------------")
+def updateBullets(bulletsList: list, enemiesSurface: pygame.surface, enemiesList: list, player: src.ships.player.newPlayer,):
+    """Updates the bullets that are currently in the game
+
+    Args:
+        enemiesList (list): the list of enemies currently in the game.
+        enemiesSurface (pygame.surface): The surface to render the enemies to.
+        player (src.ships.player.newPlayer): The player object.
+        bulletsList (list): The list of bullets in the game.
+
+    Returns:
+        list: The updated bullets list
+    """
 
     for count, bullet in enumerate(bulletsList):
         print(bullet.origin)

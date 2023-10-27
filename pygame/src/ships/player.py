@@ -5,6 +5,18 @@ from src.consts import *
 
 import src.ships.bullet
 class newPlayer():
+    """Class to represent a player
+
+    Attributes:
+        rotationAmount (int): Amount to rotate the player the next time movement is updated.
+        speed (int): Speed of the player -> how many pixels to move the player next time movement is
+            updated.
+        position: (list): Current position of the player.
+        angle (int): Current angle of the player.
+        img (pygame.image): The image of the player.
+        rect (pygame.Rect): The players rect (Used for collisions).
+        health (int): The health of the player.
+    """
     def __init__(self):
         # player values for amount to move
         self.rotationAmount = 0
@@ -24,7 +36,15 @@ class newPlayer():
         # debug
         print(f"DEBUG: center = {self.rect.center}")
 
-    def updateMovement(self, keyUp, keyDown, keyLeft, keyRight):
+    def updateMovement(self, keyUp: bool, keyDown: bool, keyLeft: bool, keyRight: bool):
+        """Updates the player movement
+
+        Args:
+            keyUp (bool): Key up currently pressed
+            keyDown (bool): Key down currently pressed
+            keyLeft (bool): Key left currently pressed
+            keyRight (bool): Key right currently pressed
+        """
         if keyLeft == True:
             self.angle += 7
 
@@ -40,6 +60,8 @@ class newPlayer():
 
 
     def move(self):
+        """Moves the player in the direction it is facing
+        """
         # Change angle
         self.angle += self.rotationAmount
 
@@ -53,7 +75,12 @@ class newPlayer():
         self.position[1] += yDist
 
 
-    def render(self, screen):
+    def render(self, screen: pygame.display):
+        """Renders the player to the center of the screen
+
+        Args:
+            screen (pygame.display): Game screen
+        """
         # Rotate player image
         rotatedImage = pygame.transform.rotate(self.img, self.angle)
 
@@ -65,6 +92,11 @@ class newPlayer():
         screen.blit(rotatedImage, renderRect)
 
     def shootBullet(self):
+        """Generates a new bullet originating from the player
+
+        Returns:
+            src.ships.bullet.newBullet: The bullet that was created to be added to the bullets list
+        """
         bulletPos = self.position[:]
         bulletSpeed = self.speed+30
         bulletAngle = self.angle+0

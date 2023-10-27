@@ -12,11 +12,15 @@ CLEAR_SURFACE = pygame.Surface((10000, 10000)).convert_alpha()
 CLEAR_SURFACE.fill(CLEAR)
 
 
-def gameLoop(screen):
-    # ANCHOR - other setup
+def gameLoop(screen: pygame.surface):
+    """The main game loop for the game
+
+    Args:
+        screen (pygame.surface): the screen to put the game on
+    """
     inputHandler = src.scripts.handleInput.inputHandler()
     player = src.ships.player.newPlayer()
-    # hello
+
     # starsSurf is the surface of stars that moves with the player
     starsSurf = pygame.Surface((10000, 10000)).convert_alpha()
     starsSurf.fill(CLEAR)
