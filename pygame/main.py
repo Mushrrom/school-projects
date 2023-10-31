@@ -2,6 +2,7 @@ import pygame
 
 from src.consts import *
 import src.menus.mainMenu
+import src.menus.highScore
 
 # pygame setup
 pygame.init()
@@ -17,6 +18,8 @@ while gameLoop:
 
     if option == 0:
         src.main.game.gameLoop(screen)
+    elif option == 1:
+        src.menus.highScore.showHighScores(screen)
     elif option == 2:
         gameLoop = False
 

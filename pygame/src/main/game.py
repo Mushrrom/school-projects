@@ -1,12 +1,13 @@
 import random
-import copy
 import time
 
 import pygame
 import pygame.freetype
+
 import src.scripts.handleInput
-from src.ships import enemy, player
+import src.scripts.highScores
 import src.scripts.updateEntities
+from src.ships import enemy, player
 from src.consts import *
 
 
@@ -59,9 +60,9 @@ def gameLoop(screen: pygame.surface):
 
     # TODO -
     # [ ] Mane enemies spawn
+    # [ ] Reset score and player health to 0 and 100
 
-
-    score = 0
+    score = 1
     combo = 1
     lastHitTime = 0
 
@@ -164,7 +165,14 @@ def gameLoop(screen: pygame.surface):
             pygame.draw.rect(screen, (255, 255, 255), (500, 420, 100-round(timeSinceHit*20), 20))
 
         # Quit on death
-        if player.health < 0:
+        if player.health <= 0:
             playing = False
+            print("Ce", flush=True)
         pygame.display.update()
         clock.tick(FPS)
+
+    #  -----------------------
+    # / save high scores :3 /
+    # ----------------------
+
+    src.scripts.highScores.saveHighScore(screen, score, clock)

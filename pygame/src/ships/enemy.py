@@ -4,7 +4,7 @@ from typing import Union
 import pygame
 
 from src.consts import *
-import src.scripts.mathFunctions as mathFunctions
+import src.scripts.functions as mathFunctions
 
 class newEnemy:
     """Class to represent an enemy

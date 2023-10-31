@@ -38,7 +38,7 @@ class newPlayer():
         self.collideRect.center = self.rect.center
 
         # Health amount
-        self.health = 100
+        self.health = 0
 
         # debug
         print(f"DEBUG: center = {self.rect.center}")

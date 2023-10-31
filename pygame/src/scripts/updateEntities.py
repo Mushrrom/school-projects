@@ -3,7 +3,7 @@ import time
 import pygame
 
 import src.ships.bullet
-
+import src.ships.player
 def updateEnemies(enemiesList: list, enemiesSurface: pygame.surface, player: src.ships.player.newPlayer, bulletsList: list):
     """Updates the enemies positions & shoots bullets from enemies
 
