@@ -7,6 +7,10 @@ This game was inspired by the [Spacewar!](https://en.wikipedia.org/wiki/Spacewar
 The controls might seem weird too, they were inspired by the controls for Celeste
 
 ## Other stuff
+All assets by me, pixel font from google fonts.
+
+I would have liked to have added sound too, but I ran out of time in the end
+
 Instructions and stuff are all inside the game. This was a good exercise in better programming project structure and using docstrings properly (I <3 the vsc docstrings extension). Also was fun to learn pygame.
 
 Commit history available at https://github.com/mushrrom/school-projects/commits (all commits starting with "pygame") :)
