@@ -59,7 +59,7 @@ def gameLoop(screen: pygame.surface):
 
     # TODO -
     # [ ] Mane enemies spawn
-    
+
 
     score = 0
     combo = 1
@@ -67,7 +67,7 @@ def gameLoop(screen: pygame.surface):
 
     clock = pygame.time.Clock()
 
-    GAME_FONT = pygame.freetype.Font("assets/PixelifySans-Regular.ttf", 24)
+    # GAME_FONT = pygame.freetype.Font("assets/PixelifySans-Regular.ttf", 24)
 
     # ships (debug for now)
     enemiesList = [src.ships.enemy.newEnemy(), src.ships.enemy.newEnemy(pos=[250, 250])]
@@ -82,8 +82,6 @@ def gameLoop(screen: pygame.surface):
     while playing:
         screen.fill(BG)
         [playing, keyUp, keyDown, keyLeft, keyRight, keyC] = inputHandler.handleInput()
-
-        print(player.health, flush=True)
 
         bulletsList = src.scripts.updateEntities.updateEnemies(enemiesList, enemiesSurface, player, bulletsList)
         score, combo, lastHitTime = src.scripts.updateEntities.updateBullets(bulletsList, enemiesSurface,
@@ -165,5 +163,8 @@ def gameLoop(screen: pygame.surface):
             GAME_FONT.render_to(screen, (500, 450), f"combo: {combo}X", (255, 255, 255))
             pygame.draw.rect(screen, (255, 255, 255), (500, 420, 100-round(timeSinceHit*20), 20))
 
+        # Quit on death
+        if player.health < 0:
+            playing = False
         pygame.display.update()
         clock.tick(FPS)

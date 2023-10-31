@@ -15,9 +15,9 @@ gameLoop = True
 while gameLoop:
     option = src.menus.mainMenu.renderMenu(screen)
 
-    if option == "playGame":
+    if option == 0:
         src.main.game.gameLoop(screen)
-    elif option == "quit":
+    elif option == 2:
         gameLoop = False
 
 pygame.quit()
