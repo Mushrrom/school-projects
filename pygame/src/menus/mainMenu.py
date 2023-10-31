@@ -1,5 +1,4 @@
 import pygame
-import pygame_gui
 import pygame.freetype
 from pygame.locals import *
 
