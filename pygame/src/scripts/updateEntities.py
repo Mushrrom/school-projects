@@ -67,6 +67,8 @@ def updateBullets(bulletsList: list, enemiesSurface: pygame.surface, enemiesList
             break
 
         if bullet.distance > 100:
+            bullet.clearBullet(enemiesSurface)
             bulletsList.pop(count)
+            break
 
     return score, combo, lastHitTime

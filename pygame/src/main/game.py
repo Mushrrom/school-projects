@@ -57,6 +57,10 @@ def gameLoop(screen: pygame.surface):
         pygame.draw.circle(starsSurf3, (150, 150, 150), (starX, starY), 1)
     playing = True
 
+    # TODO -
+    # [ ] Mane enemies spawn
+    
+
     score = 0
     combo = 1
     lastHitTime = 0
@@ -105,26 +109,26 @@ def gameLoop(screen: pygame.surface):
             # Make player face away from wall
             player.angle = 270
             # Reset player speed to 0
-            player.speed = 0
+            player.velocity = [0, 0]
             # Wait 0.5 seconds (one frame @ 2fps)
             clock.tick(2)
         elif player.position[0]>9980:  # Right wall
             player.health -= 20
             player.position[0] = 9900
-            player.speed = 0
+            player.velocity = [0, 0]
             player.angle = 90
             clock.tick(2)
         elif player.position[1]<20:  # Top wall
             player.health -= 20
             player.position[1] = 100
-            player.speed = 0
+            player.velocity = [0, 0]
             player.angle = 180
             clock.tick(2)
         elif player.position[1]>9980:  # Bottom wall
             player.health -= 20
             player.position[1] = 9900
             player.speed = 0
-            player.angle = 0
+            player.velocity = [0, 0]
             clock.tick(2)
 
 

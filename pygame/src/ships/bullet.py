@@ -40,7 +40,7 @@ class newBullet():
                 it hit the player otherwise it returns what enemy it hit
         """
         if self.origin == "enemy":
-            if self.rect.colliderect(player.rect):
+            if self.rect.colliderect(player.collideRect):
                 player.health -= 10
                 return [True, -1]
             else:
