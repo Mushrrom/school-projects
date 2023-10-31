@@ -46,7 +46,7 @@ def saveHighScore(screen: any, score: int, clock: any):
         # Say u got high score
         GAME_FONT.render_to(screen, (210, 230), "You got a high score!", (255, 255, 255))
         GAME_FONT.render_to(screen, (250, 300), "Continue :", (255, 255, 255))
-        screen.blit(c_key, (361, 302))
+        screen.blit(c_key, (381, 302))
 
         pygame.display.update()
 
@@ -131,7 +131,6 @@ def saveHighScore(screen: any, score: int, clock: any):
 
         # Sorts high scores by score (high to low)
         scores['highScores'] = sorted(scores['highScores'], key=lambda x : x['score'], reverse=True)
-        print(scores)
 
         # Save high score
         with open("scores.json", "w") as f:

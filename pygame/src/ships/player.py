@@ -8,7 +8,6 @@ class newPlayer():
     """Class to represent a player
 
     Attributes:
-        rotationAmount (int): Amount to rotate the player the next time movement is updated.
         speed (int): Speed of the player -> how many pixels to move the player next time movement is
             updated.
         position: (list): Current position of the player.
@@ -17,17 +16,17 @@ class newPlayer():
         rect (pygame.Rect): The players rect (Used for).
         collideRect (pygame.rect): A smaller rect used for collisions.
         health (int): The health of the player.
+        Velocity (list): X and Y vel of the player
     """
     def __init__(self):
         # Constant amount for speed
         self.speed = 0.1
 
         # player values for amount to move
-        self.rotationAmount = 0
         self.velocity = [0, 0]
 
         # player values for current position+angle
-        self.position = [250, 250]
+        self.position = [5_000, 5_000] # Start at center
         self.angle = 0
 
         # image + rect
@@ -38,10 +37,10 @@ class newPlayer():
         self.collideRect.center = self.rect.center
 
         # Health amount
-        self.health = 0
+        self.health = 100
 
         # debug
-        print(f"DEBUG: center = {self.rect.center}")
+        # print(f"DEBUG: center = {self.rect.center}")
 
     def updateMovement(self, keyUp: bool, keyDown: bool, keyLeft: bool, keyRight: bool):
         """Updates the player movement
@@ -100,5 +99,4 @@ class newPlayer():
         bulletAngle = self.angle+0
         bullet = src.ships.bullet.newBullet(bulletPos, bulletSpeed, bulletAngle, "player")
 
-        print(bullet.speed)
         return bullet

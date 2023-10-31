@@ -16,10 +16,6 @@ def renderMenu(screen: pygame.surface):
     """
     clock = pygame.time.Clock()
 
-    # TODO -
-    # [X] Make this use arrow keys to select instead of mouse
-
-
     arrows = pygame.image.load("assets/arrows.png")
     c_key = pygame.image.load("assets/c_key.png")
     sel = 0 # current selection
@@ -39,6 +35,7 @@ def renderMenu(screen: pygame.surface):
 
         # Render options
         screen.fill(BG)
+        GAME_FONT.render_to(screen, (270, 100), "Spacewar! 2", (255, 255, 255))
         GAME_FONT.render_to(screen, (270, 200), "  Play game  ", (255, 255, 255))
         GAME_FONT.render_to(screen, (234, 260), "   View high scores   ", (255, 255, 255))
         GAME_FONT.render_to(screen, (310, 320), "  Quit  ", (255, 255, 255))

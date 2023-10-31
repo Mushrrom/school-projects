@@ -3,6 +3,7 @@ import time
 
 import pygame
 import pygame.freetype
+from pygame.locals import *
 
 import src.scripts.handleInput
 import src.scripts.highScores
@@ -19,6 +20,17 @@ def gameLoop(screen: pygame.surface):
     """
     inputHandler = src.scripts.handleInput.inputHandler()
     player = src.ships.player.newPlayer()
+    c_key = pygame.image.load("assets/c_key.png")
+    # Render instructions
+    screen.fill(BG)
+    GAME_FONT.render_to(screen, (100, 100), "How to play: ", (255, 255, 255))
+    GAME_FONT.render_to(screen, (100, 200), "Turn ship: left+right key ", (255, 255, 255))
+    GAME_FONT.render_to(screen, (100, 250), "Accelerate ship: Up key", (255, 255, 255))
+    GAME_FONT.render_to(screen, (100, 300), "Shoot: c", (255, 255, 255))
+    GAME_FONT.render_to(screen, (100, 350), "Warp: x", (255, 255, 255))
+    GAME_FONT.render_to(screen, (100, 370), "Be careful warping, it has a 1/3 chance", (255, 255, 255))
+    GAME_FONT.render_to(screen, (100, 390), "to malfunction and destroy your ship", (255, 255, 255))
+    pygame.display.update()
 
     # starsSurf is the surface of stars that moves with the player
     starsSurf = pygame.Surface((10000, 10000)).convert_alpha()
@@ -29,12 +41,6 @@ def gameLoop(screen: pygame.surface):
         starY = random.randint(0, 99990)
         pygame.draw.circle(starsSurf, (255, 255,255), (starX, starY), 4)
 
-    # -- Draws the vertical and horizontal walls to the first star surface
-    pygame.draw.rect(starsSurf, (127, 127, 127), (0, 0, 20, 10000)) # Left vertical
-    pygame.draw.rect(starsSurf, (127, 127, 127), (9_980, 0, 20, 10_000)) # Right vertical
-
-    pygame.draw.rect(starsSurf, (127, 127, 127), (0, 0, 10_000, 20)) # Top horizontal
-    pygame.draw.rect(starsSurf, (127, 127, 127), (0, 9_980, 10_000, 20)) # top vertical
 
     # startSurf2 is the surface of the stars that move at 1/2 the speed of the player
     # for the parallax effect
@@ -58,31 +64,45 @@ def gameLoop(screen: pygame.surface):
         pygame.draw.circle(starsSurf3, (150, 150, 150), (starX, starY), 1)
     playing = True
 
-    # TODO -
-    # [ ] Mane enemies spawn
-    # [ ] Reset score and player health to 0 and 100
+    # -- Draws the vertical and horizontal walls to the first star surface
+    pygame.draw.rect(starsSurf, (127, 127, 127), (0, 0, 20, 10000)) # Left vertical
+    pygame.draw.rect(starsSurf, (127, 127, 127), (9_980, 0, 20, 10_000)) # Right vertical
+
+    pygame.draw.rect(starsSurf, (127, 127, 127), (0, 0, 10_000, 20)) # Top horizontal
+    pygame.draw.rect(starsSurf, (127, 127, 127), (0, 9_980, 10_000, 20)) # top vertical
 
     score = 1
     combo = 1
     lastHitTime = 0
-
     clock = pygame.time.Clock()
+    enemiesList = []
 
-    # GAME_FONT = pygame.freetype.Font("assets/PixelifySans-Regular.ttf", 24)
-
-    # ships (debug for now)
-    enemiesList = [src.ships.enemy.newEnemy(), src.ships.enemy.newEnemy(pos=[250, 250])]
-    # newEnemy = src.ships.enemy.newEnemy()
-    # newEnemy2 = src.ships.enemy.newEnemy(pos=[250, 250])
-
+    # Surf for enemies and bullets
     enemiesSurface = pygame.Surface((10000, 10000)).convert_alpha()
     enemiesSurface.fill(CLEAR)
 
     bulletsList = []
 
+    GAME_FONT.render_to(screen, (250, 420), "Continue :", (255, 255, 255))
+    screen.blit(c_key, (381, 422))
+
+    pygame.display.update()
+
+    # Wait until c key pressed
+    loop = True
+    while loop:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == KEYDOWN:
+                if event.key == K_c:
+                    loop = False
+
+        clock.tick(60)
+
     while playing:
         screen.fill(BG)
-        [playing, keyUp, keyDown, keyLeft, keyRight, keyC] = inputHandler.handleInput()
+        [playing, keyUp, keyDown, keyLeft, keyRight, keyC, keyX] = inputHandler.handleInput()
 
         bulletsList = src.scripts.updateEntities.updateEnemies(enemiesList, enemiesSurface, player, bulletsList)
         score, combo, lastHitTime = src.scripts.updateEntities.updateBullets(bulletsList, enemiesSurface,
@@ -131,6 +151,19 @@ def gameLoop(screen: pygame.surface):
             clock.tick(2)
 
 
+        # Spawn new enemies in randomly
+        if len(enemiesList) < 5:
+            if random.randint(0, 30*len(enemiesList)) == 0:
+                enemyX = random.randint(int(player.position[0])-500, int(player.position[0]+500))
+                enemyY = random.randint(int(player.position[0]-500), int(player.position[0]+500))
+                enemiesList.append(src.ships.enemy.newEnemy(pos=[enemyX, enemyY]))
+
+        if keyX:
+            if random.randint(0, 3) == 0:
+                playing = False
+            else:
+                player.position = [random.randint(100, 9900), random.randint(100, 9900)]
+
         # Update player movement
         player.updateMovement(keyUp, keyDown, keyLeft, keyRight)
         player.move()
@@ -167,12 +200,31 @@ def gameLoop(screen: pygame.surface):
         # Quit on death
         if player.health <= 0:
             playing = False
-            print("Ce", flush=True)
+        
         pygame.display.update()
         clock.tick(FPS)
 
-    #  -----------------------
-    # / save high scores :3 /
-    # ----------------------
+    #  ---------------
+    # / After death /
+    # --------------
+    screen.fill(BG)
+
+    GAME_FONT.render_to(screen, (210, 230), f"You died. Score: {score}", (255, 255, 255))
+    GAME_FONT.render_to(screen, (250, 300), "Continue :", (255, 255, 255))
+    screen.blit(c_key, (381, 302))
+
+    pygame.display.update()
+
+    # Wait until c key pressed
+    loop = True
+    while loop:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == KEYDOWN:
+                if event.key == K_c:
+                    loop = False
+
+        clock.tick(60)
 
     src.scripts.highScores.saveHighScore(screen, score, clock)

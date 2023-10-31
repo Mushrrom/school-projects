@@ -27,6 +27,7 @@ class inputHandler():
         """
         gameLoop = True
         keyC = False
+        keyX = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -42,6 +43,8 @@ class inputHandler():
                     self.keyDown = True
                 elif event.key == K_c:
                     keyC = True
+                elif event.key == K_x:
+                    keyX = True
 
 
             elif event.type == KEYUP:
@@ -54,4 +57,4 @@ class inputHandler():
                 elif event.key == K_DOWN:
                     self.keyDown = False
 
-        return gameLoop, self.keyUp, self.keyDown, self.keyLeft, self.keyRight, keyC
+        return gameLoop, self.keyUp, self.keyDown, self.keyLeft, self.keyRight, keyC, keyX
