@@ -1,3 +1,5 @@
+import time
+
 import pygame
 
 import src.ships.bullet
@@ -29,7 +31,8 @@ def updateEnemies(enemiesList: list, enemiesSurface: pygame.surface, player: src
 
     return bulletsList
 
-def updateBullets(bulletsList: list, enemiesSurface: pygame.surface, enemiesList: list, player: src.ships.player.newPlayer,):
+def updateBullets(bulletsList: list, enemiesSurface: pygame.surface, enemiesList: list,
+                  player: src.ships.player.newPlayer, score: int, combo: int, lastHitTime: int):
     """Updates the bullets that are currently in the game
 
     Args:
@@ -37,23 +40,33 @@ def updateBullets(bulletsList: list, enemiesSurface: pygame.surface, enemiesList
         enemiesSurface (pygame.surface): The surface to render the enemies to.
         player (src.ships.player.newPlayer): The player object.
         bulletsList (list): The list of bullets in the game.
+        score (int): The current game score
+        combo (int): The current combo amount
+        lastHitTime (int): Time time the enemy was last hit
 
     Returns:
-        list: The updated bullets list
+        int: Updated score amount
+        int: Updated combo amount
     """
 
     for count, bullet in enumerate(bulletsList):
-        print(bullet.origin)
-
         bullet.clearBullet(enemiesSurface)
         bullet.moveBullet()
-        bullet.checkCollisions(player, enemiesList)
+        bulletCollision = bullet.checkCollisions(player, enemiesList)
         bullet.render(enemiesSurface)
+        if bulletCollision[0] == True:
+            if bulletCollision[1] >= 0:
+                enemiesList[bulletCollision[1]].clearEnemy(enemiesSurface)
+                enemiesList.pop(bulletCollision[1])
+                score += 100*combo
+                combo += 1
+                lastHitTime = time.time()
+
+            bullet.clearBullet(enemiesSurface)
+            bulletsList.pop(count)
+            break
 
         if bullet.distance > 100:
             bulletsList.pop(count)
 
-    return bulletsList
-
-
-
+    return score, combo, lastHitTime

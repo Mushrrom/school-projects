@@ -4,7 +4,7 @@ import pygame
 from src.consts import *
 
 class newBullet():
-    """Class to represent a player
+    """Class to represent a bullet
 
     Attributes:
 

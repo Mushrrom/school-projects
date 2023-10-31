@@ -24,7 +24,7 @@ class newEnemy:
 
         self.position = pos
         self.angle = 0
-        self.image = pygame.transform.scale_by(pygame.image.load("assets/enemy.png"), 2)
+        self.image = pygame.transform.scale_by(pygame.image.load("assets/enemy.png"), 3)
         self.rect = self.image.get_rect()
 
 
@@ -83,8 +83,6 @@ class newEnemy:
                 elif relativeAngle > 180:
                     relativeAngle -= 360
 
-        # print(angleToPlayer)
-        # print(self.angle)
 
         if relativeAngle > 0:
             self.angle += 5
@@ -103,4 +101,4 @@ class newEnemy:
         Args:
             screen (_type_): _description_
         """
-        pygame.draw.rect(screen, CLEAR, (self.position[0]-20, self.position[1]-20, 40, 40))
+        pygame.draw.rect(screen, CLEAR, (self.position[0]-30, self.position[1]-30, 60, 60))

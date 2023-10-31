@@ -1,5 +1,6 @@
 import random
 import copy
+import time
 
 import pygame
 import pygame.freetype
@@ -7,9 +8,6 @@ import src.scripts.handleInput
 from src.ships import enemy, player
 import src.scripts.updateEntities
 from src.consts import *
-
-CLEAR_SURFACE = pygame.Surface((10000, 10000)).convert_alpha()
-CLEAR_SURFACE.fill(CLEAR)
 
 
 def gameLoop(screen: pygame.surface):
@@ -32,10 +30,10 @@ def gameLoop(screen: pygame.surface):
 
     # -- Draws the vertical and horizontal walls to the first star surface
     pygame.draw.rect(starsSurf, (127, 127, 127), (0, 0, 20, 10000)) # Left vertical
-    pygame.draw.rect(starsSurf, (127, 127, 127), (9_980, 0, 10_000, 10_000)) # Right vertical
+    pygame.draw.rect(starsSurf, (127, 127, 127), (9_980, 0, 20, 10_000)) # Right vertical
 
     pygame.draw.rect(starsSurf, (127, 127, 127), (0, 0, 10_000, 20)) # Top horizontal
-    pygame.draw.rect(starsSurf, (127, 127, 127), (0, 9_980, 10_000, 10_000)) # top vertical
+    pygame.draw.rect(starsSurf, (127, 127, 127), (0, 9_980, 10_000, 20)) # top vertical
 
     # startSurf2 is the surface of the stars that move at 1/2 the speed of the player
     # for the parallax effect
@@ -59,9 +57,13 @@ def gameLoop(screen: pygame.surface):
         pygame.draw.circle(starsSurf3, (150, 150, 150), (starX, starY), 1)
     playing = True
 
+    score = 0
+    combo = 1
+    lastHitTime = 0
+
     clock = pygame.time.Clock()
 
-    GAME_FONT = pygame.freetype.Font("assets/bauhaus.ttf", 24)
+    GAME_FONT = pygame.freetype.Font("assets/PixelifySans-Regular.ttf", 24)
 
     # ships (debug for now)
     enemiesList = [src.ships.enemy.newEnemy(), src.ships.enemy.newEnemy(pos=[250, 250])]
@@ -77,13 +79,62 @@ def gameLoop(screen: pygame.surface):
         screen.fill(BG)
         [playing, keyUp, keyDown, keyLeft, keyRight, keyC] = inputHandler.handleInput()
 
-        # TODO:
-        # [X] Move this to its own function and iterate through them
-
         print(player.health, flush=True)
 
         bulletsList = src.scripts.updateEntities.updateEnemies(enemiesList, enemiesSurface, player, bulletsList)
-        bulletsList = src.scripts.updateEntities.updateBullets(bulletsList, enemiesSurface, enemiesList, player)
+        score, combo, lastHitTime = src.scripts.updateEntities.updateBullets(bulletsList, enemiesSurface,
+                                                               enemiesList, player, score, combo, lastHitTime)
+
+        timeSinceHit = time.time() - lastHitTime
+        if combo > 1:
+            if timeSinceHit > 5:
+                combo = 1
+
+
+        if keyC:
+            bulletsList.append(player.shootBullet())
+
+        #  -------------------------------
+        # / Check collisions with walls /
+        # ------------------------------
+        if player.position[0]<20:  # Left wall
+            # Make player lose health
+            player.health -= 20
+            # Reset player position to be away from wall
+            player.position[0] = 100
+            # Make player face away from wall
+            player.angle = 270
+            # Reset player speed to 0
+            player.speed = 0
+            # Wait 0.5 seconds (one frame @ 2fps)
+            clock.tick(2)
+        elif player.position[0]>9980:  # Right wall
+            player.health -= 20
+            player.position[0] = 9900
+            player.speed = 0
+            player.angle = 90
+            clock.tick(2)
+        elif player.position[1]<20:  # Top wall
+            player.health -= 20
+            player.position[1] = 100
+            player.speed = 0
+            player.angle = 180
+            clock.tick(2)
+        elif player.position[1]>9980:  # Bottom wall
+            player.health -= 20
+            player.position[1] = 9900
+            player.speed = 0
+            player.angle = 0
+            clock.tick(2)
+
+
+        # Update player movement
+        player.updateMovement(keyUp, keyDown, keyLeft, keyRight)
+        player.move()
+
+        #  -------------------
+        # / Rendering stuff /
+        # ------------------
 
         # Render the stars to the screen. Renders the furthest one first and so on
         screen.blit(starsSurf3, (-(player.position[0]//4+SCREEN_WIDTH//2), -(player.position[1]//4+SCREEN_HEIGHT//2)))
@@ -93,16 +144,22 @@ def gameLoop(screen: pygame.surface):
         # Render the enemies to the screen
         screen.blit(enemiesSurface, (-(player.position[0]-SCREEN_WIDTH//2), -(player.position[1]-SCREEN_HEIGHT//2)))
 
-        if keyC:
-            bulletsList.append(player.shootBullet())
-
-        # Update player movement and render player to screen
-        player.updateMovement(keyUp, keyDown, keyLeft, keyRight)
-        player.move()
+        # Render the player to the screen
         player.render(screen)
 
-        # Add FPS counter to screen
-        GAME_FONT.render_to(screen, (0, 0), f"fps: {round(clock.get_fps())}", (255, 255, 255))
-        pygame.display.update()
+        # Add FPS counter + score + combo to screen
+        GAME_FONT.render_to(screen, (0, 10), f"fps: {round(clock.get_fps())}", (255, 255, 255))
+        GAME_FONT.render_to(screen, (450, 10), f"score: {score}", (255, 255, 255))
 
+        # Add health bar
+        pygame.draw.rect(screen, (255, 0, 0), (110, 450, player.health, 20))
+        pygame.draw.rect(screen, (255, 255, 255), (105, 445, 110, 30), 5, 5, 5, 5)
+        GAME_FONT.render_to(screen, (10, 450), "health:", (255, 255, 255))
+
+        # Combo amount and countdown
+        if combo > 1:
+            GAME_FONT.render_to(screen, (500, 450), f"combo: {combo}X", (255, 255, 255))
+            pygame.draw.rect(screen, (255, 255, 255), (500, 420, 100-round(timeSinceHit*20), 20))
+
+        pygame.display.update()
         clock.tick(FPS)

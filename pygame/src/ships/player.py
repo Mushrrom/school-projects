@@ -27,7 +27,7 @@ class newPlayer():
         self.angle = 0
 
         # image + rect
-        self.img = pygame.transform.scale_by(pygame.image.load("assets/test_image.png"), 2)
+        self.img = pygame.transform.scale_by(pygame.image.load("assets/test_image.png"), 3)
         self.rect = self.img.get_rect()
 
         # Health amount
