@@ -1,0 +1,20 @@
+*.xml
+*.musicxml
+
+# Projects that are not completed in a good state
+2024/mathsimmersion
+2024/stupid-responses
+2024/websitethingo
+
+# Other stuff from small projects that aren't great
+2024/smallcomputing/2.py
+2024/smallcomputing/main.py
+
+# These are from the AT2-OOP
+main_old.py
+main-old2.py
+
+# Other random names i use for testing stuff
+test.py
+test2.py
+2.py

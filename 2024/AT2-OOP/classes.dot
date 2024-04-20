@@ -1,0 +1,8 @@
+digraph "classes" {
+rankdir=BT
+charset="utf-8"
+"main.bar" [color="black", fontcolor="black", label=<{main.bar|bar : dict<br ALIGN="LEFT"/>notes : list<br ALIGN="LEFT"/>|}>, shape="record", style="solid"];
+"main.note" [color="black", fontcolor="black", label=<{main.note|duration<br ALIGN="LEFT"/>isChord : bool<br ALIGN="LEFT"/>notes<br ALIGN="LEFT"/>singleNote : NoneType<br ALIGN="LEFT"/>startSeconds<br ALIGN="LEFT"/>|print_mathematica()<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
+"main.part" [color="black", fontcolor="black", label=<{main.part|bars : list<br ALIGN="LEFT"/>part<br ALIGN="LEFT"/>|getTotalBeats(): int<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
+"main.song" [color="black", fontcolor="black", label=<{main.song|parts : list<br ALIGN="LEFT"/>score<br ALIGN="LEFT"/>tempo<br ALIGN="LEFT"/>|}>, shape="record", style="solid"];
+}
