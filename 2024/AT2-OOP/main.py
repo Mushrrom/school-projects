@@ -1,8 +1,11 @@
 import xmltodict
 import json
 
-FIFTHS_SHARPS = ["F", "C", "G", "D", "A", "E", "B"]
-FIFTHS_FLATS = ["B", "E", 'A', "D", "G", "C", "F"]
+# FIFTHS_SHARPS = ["F", "C", "G", "D", "A", "E", "B"]
+# FIFTHS_FLATS = ["B", "E", 'A', "D", "G", "C", "F"]
+
+FIFTHS_SHARPS = ["B", "E", 'A', "D", "G", "C", "F"]
+FIFTHS_FLATS = ["F", "C", "G", "D", "A", "E", "B"]
 
 # Can use this to overwrite with custom symbols for flats and sharps
 FLAT = "Flat"
@@ -32,9 +35,12 @@ def getBeatsInBar(bar):
     return beats
 
 
-def getSongBPMChanges(part):
-    """A function to get the bpm changes of a song, because musicxml only stores
+def getSongBPMPerBar(part):
+    """A function to get the bpm of each bar of a song, because musicxml only stores
     bpm changes on the first instrument... im gonna lose my sanity soon
+
+    WHY IN THE NAME OF GOD AND ALL THAT IS HOLY DID MUSICXML NOT PUT THE FUCKING
+    BPM CHANGES IN EACH INSTRUMENT
 
     Args:
         part (dict): the instrument
@@ -43,17 +49,46 @@ def getSongBPMChanges(part):
         _type_: _description_
     """
 
-    # The bpm changes is a list of lists, where value 0 is the bar it occurs on
-    # and bar 2 is the bpm
-    bpmChanges = []
-    for i in part["measure"]
+    bpmList = []
+    bpm = 0
+    for count, i in enumerate(part["measure"]):
         try:
             # Float is used instead of int for the rare cases where people
             # decide to use a decimal bpm
             bpm = float(i["direction"]["sound"]["@tempo"])
+
+
             # secondsPerBeat = 60 / bpm
         except:
             pass
+
+        bpmList.append(bpm)
+    return bpmList
+
+def getSongTimeSigPerBar(part):
+    """Gets the number of beats in each bar of a song. This is the main reason that
+    the program only works for songs in times over 4. this exists for the same
+    reason as above
+
+    Args:
+        part (dict): the instrument
+
+    Returns:
+        _type_: _description_
+    """
+    timeSigList = []
+    beats = 0
+    for i in part["measure"]:
+        try:  # Deals with time sig changes
+            if str(type(i["attributes"])) != "<class 'list'>":
+                beats = int(i["attributes"]["time"]["beats"])
+            else:
+                beats = int(int(i["attributes"][0]["time"]["beats"]))
+        except:  # Exception will be caused if it can't get the attributes or the time object
+            pass
+        timeSigList.append(beats)
+
+    return(timeSigList)
 
 
 class song:
@@ -67,11 +102,16 @@ class song:
         # Create the list of parts
 
         if str(type(self.score["part"])) == "<class 'list'>":  # will be list if multiple parts
+            songBPMList = getSongBPMPerBar(self.score["part"][0])
+            songTimeSigList = getSongTimeSigPerBar(self.score["part"][0])
+            # quit()
             for i in self.score["part"]:
-                self.parts.append(part(i))
+                self.parts.append(part(i, songBPMList, songTimeSigList))
 
         else:  # otherwise if there is just one add it to index 0
-            self.parts.append(part(self.score["part"]))
+            songBPMList = getSongBPMPerBar(self.score["part"])
+            songTimeSigList = getSongTimeSigPerBar(self.score["part"])
+            self.parts.append(part(self.score["part"], songBPMList, songTimeSigList))
 
         # Get the tempo of the first bar (initial tempo of the piece)
         self.tempo = self.parts[0].part["measure"][0]["direction"]["sound"]["@tempo"]
@@ -82,16 +122,22 @@ class song:
 
 
 class part:
-    def __init__(self, part):
+    def __init__(self, part, songBPMList, songTimeSigList):
         self.part = part
         self.bars = []
+
+        # divisions = how long a quarter note is
+        self.divisions = int(self.part["measure"][0]["attributes"]["divisions"])
 
         bpm = 0  # musicxml should define the bpm in the first bar
         secondsPerBeat = 0  # useful for calculations. Will be equal to 60/bpm
         currentBeat = 0
         currentTimeSeconds = 0
-        beatsLastBar = 0  #
-        for i in self.part["measure"]:
+        for count, i in enumerate(self.part["measure"]):
+            # Set up variables that are used for each iteration
+            bpm = songBPMList[count]  # bpm of current bar (from bpm list)
+            secondsPerBeat = 60/bpm  # how many seconds each beat lasts
+
             # Key signature stuff
             if "attributes" in i:
                 if "key" in i["attributes"]:
@@ -102,26 +148,13 @@ class part:
                     else:
                         sharps = True
                         key = FIFTHS_FLATS[:abs(fifths)]
-            try:
-                # Float is used instead of int for the rare cases where people
-                # decide to use a decimal bpm
-                bpm = float(i["direction"]["sound"]["@tempo"])
-                secondsPerBeat = 60 / bpm
-            except:
-                pass
 
-            print(f"1: {currentTimeSeconds}")
+            beatsInBar = songTimeSigList[count]
+
             self.bars.append(bar(i, bpm, currentBeat, currentTimeSeconds,
-                                  secondsPerBeat, key, sharps))
+                                  key, sharps, self.divisions))
 
-            # The duration gives the length of the bar in division units, dividing
-            # by 4 will give the beats in the bar
-            beatsInBar = getBeatsInBar(i)
-            if beatsInBar:
-                print("avc")
-                beatsLastBar = beatsInBar
-            else:
-                beatsInBar = beatsLastBar
+
 
             currentTimeSeconds += secondsPerBeat * beatsInBar
             # print(currentTimeSeconds)
@@ -154,7 +187,7 @@ class part:
 
 class bar:
     def __init__(self, bar: dict, bpm: float, currentBeat: int, currentTimeSeconds: float,
-                  secondsPerBeat: float, key: list, sharps: bool):
+                  key: list, sharps: bool, divisions: int):
         """A bar element
 
         Args:
@@ -167,9 +200,11 @@ class bar:
             sharps (bool): whether the key sig is in sharps or flats
         """
 
-        print(f"!!!!!!!!!secondsPerBeat: {secondsPerBeat}")
+
         self.bar = bar
 
+        secondsPerBeat = 60/bpm  # How many seconds each beat (quarter note) lasts for
+        # print(f"!!!!!!!!!secondsPerBeat: {secondsPerBeat}")
 
         notes = bar["note"]
         # This handles when there is only one note in the bar (happens if there
@@ -179,15 +214,14 @@ class bar:
             notes = [notes]
 
         self.notes = []
-        staffs = [[], []]
         staff = 1
-
 
         i = 0
         relTimeSeconds = 0
         while i < len(notes):
             if "staff" in notes[i]:
                 if not notes[i]["staff"] == staff:
+                    # print("staff change")
                     staff = notes[i]["staff"]
                     relTimeSeconds = 0
 
@@ -197,14 +231,24 @@ class bar:
             # 4 is a quarter note/crotchet, 8 is an eighth note, 2 is a half note,
             # etc (basically just the fraction of the bar)
             noteLength = int(notes[i]["duration"])
-            noteLengthSeconds = (noteLength/4) * secondsPerBeat
-            relTimeSeconds += noteLengthSeconds
+
+            # Deal with a funny thing for 2/4 time (in my testing this didn't occur
+            # in 3/4 time)
+
+            noteLengthSeconds = (noteLength/divisions) * secondsPerBeat
+
+            # /4/2 for 2/4 time
+
             # the notelist works as a list of notes, each note being [note name, note octave]
 
             first = True  # track whether its the first time running the loop
             while True and i <len(notes):
                 if not "chord" in notes[i] and not first:
                     break
+                if "staff" in notes[i]:  # Deal with a bug where chords get recognised across staffs
+                    if not notes[i]["staff"] == staff:
+                        break
+
                 first = False
                 if "pitch" in notes[i]:  # if pitch isnt there its a rest
                     noteName = notes[i]["pitch"]["step"]
@@ -222,11 +266,14 @@ class bar:
                     noteList.append([noteName, noteOctave])
                 i += 1
 
-            print(f"current tie secomeds: {currentTimeSeconds}")
+            # print(f"current tie secomeds: {currentTimeSeconds}")
             noteTimeSeconds = relTimeSeconds + currentTimeSeconds
-            print(f"note time seconds: {noteTimeSeconds}")
-            print(f"rel time seconds: {relTimeSeconds}")
-            self.notes.append(note(noteList, noteTimeSeconds, noteLengthSeconds))
+            # print(f"note time seconds: {noteTimeSeconds}")
+            # print(f"rel time seconds: {relTimeSeconds}")
+            if not len(noteList) == 0:
+                self.notes.append(note(noteList, noteTimeSeconds, noteLengthSeconds))
+
+            relTimeSeconds += noteLengthSeconds
 
     def print_mathematica(self):
         for i in self.notes:
@@ -254,13 +301,13 @@ class note:
 
     def print_mathematica(self):
         try:
-            print(f"SoundNote[\"{{{self.notes_string()}}}, \{{{self.startSeconds}, {self.duration}}}]")
+            print(f"SoundNote[{{{self.notes_string('"', '","', '"')}}}, {{{self.startSeconds}, {self.endSeconds}}}],")
         except:
             pass
 
     def return_mathematica(self):
         try:
-            return f"SoundNote[\"{{{self.notes_string()}}}, {{{self.startSeconds}, {self.duration}}}]"
+            return f"SoundNote[{{{self.notes_string('"', '","', '"')}}}, {{{self.startSeconds}, {self.endSeconds}}}]"
         except:
             pass
 
@@ -271,22 +318,23 @@ class note:
 
         return notes
 
-    def notes_string(self):
-        notes = ""
+    def notes_string(self, startString = "", splitString = "", endString = ""):
+        notes = "" + startString
         # print(self.notes)
-        for i in self.notes:
-            # print(i)
+        for count, i in enumerate(self.notes):
+            if not count == 0:
+                notes += splitString
             notes += i[0]+i[1]
+
+        notes += endString
         # print(notes)
         return notes
 
 
-
-
-
 # -------------- testing ------------------
-songTest = song("duvet.xml")
+songTest = song("duet.musicxml")
 
-print(songTest.parts[0].getTotalBeats())
+# songTest = song("prologue.xml")
+# print(songTest.parts[0].getTotalBeats())
 songTest.print_mathematica()
-# print(print(json.dumps(songTest.parts[0].bars[28].bar, indent=4)))
+# print(print(json.dumps(songTest.parts[0].bars[23].bar, indent=4)))
