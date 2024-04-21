@@ -1,8 +1,6 @@
 import xmltodict
 import json
 
-# FIFTHS_SHARPS = ["F", "C", "G", "D", "A", "E", "B"]
-# FIFTHS_FLATS = ["B", "E", 'A', "D", "G", "C", "F"]
 
 FIFTHS_SHARPS = ["B", "E", 'A', "D", "G", "C", "F"]
 FIFTHS_FLATS = ["F", "C", "G", "D", "A", "E", "B"]
@@ -11,36 +9,10 @@ FIFTHS_FLATS = ["F", "C", "G", "D", "A", "E", "B"]
 FLAT = "Flat"
 SHARP = "Sharp"
 
-def getBeatsInBar(bar):
-    """gets the amount of beats in a bar, returns None if could not get the
-    amount of beats (will occur if there is no change in time signature -> same
-    amount of beats as the last)
-
-    Args:
-        bar (dict): the bar to get the num of beats from
-
-    Returns:
-        int, None: Number of beats in the bar (None if could not be found)
-    """
-    try:  # Deals with time sig changes
-        if str(type(bar["attributes"])) != "<class 'list'>":
-            beats = int(bar["attributes"]["time"]["beats"])
-        else:
-            beats = int(int(bar["attributes"][0]["time"]["beats"]))
-
-    except:  # Exception will be caused if it can't get the attributes or the time object
-        return None
-
-
-    return beats
-
 
 def getSongBPMPerBar(part):
     """A function to get the bpm of each bar of a song, because musicxml only stores
     bpm changes on the first instrument... im gonna lose my sanity soon
-
-    WHY IN THE NAME OF GOD AND ALL THAT IS HOLY DID MUSICXML NOT PUT THE FUCKING
-    BPM CHANGES IN EACH INSTRUMENT
 
     Args:
         part (dict): the instrument
@@ -92,7 +64,7 @@ def getSongTimeSigPerBar(part):
 
 
 class song:
-    def __init__(self, songfile, type_override = None):
+    def __init__(self, songfile):
         # read song file and get the score of it from the xml
         with open(songfile, "r") as f:
             scoreXML = f.read()
@@ -122,7 +94,7 @@ class song:
 
 
 class part:
-    def __init__(self, part, songBPMList, songTimeSigList):
+    def __init__(self, part: dict, songBPMList: list, songTimeSigList: list):
         self.part = part
         self.bars = []
 
@@ -199,8 +171,6 @@ class bar:
             key (list): the key as a list of the notes to apply a sharp/flat to
             sharps (bool): whether the key sig is in sharps or flats
         """
-
-
         self.bar = bar
 
         secondsPerBeat = 60/bpm  # How many seconds each beat (quarter note) lasts for
@@ -236,8 +206,6 @@ class bar:
             # in 3/4 time)
 
             noteLengthSeconds = (noteLength/divisions) * secondsPerBeat
-
-            # /4/2 for 2/4 time
 
             # the notelist works as a list of notes, each note being [note name, note octave]
 
@@ -282,7 +250,14 @@ class bar:
 
 
 class note:
-    def __init__(self, noteList, startSeconds, duration):
+    def __init__(self, noteList: list, startSeconds: float, duration: float):
+        """an object for a note
+
+        Args:
+            noteList (list): a list of notes, in the format of [[note, octave]]
+            startSeconds (float): the time in seconds when the note starts playing
+            duration (float): the duration of the note in seconds
+        """
         if len(noteList) == 1:
             self.isChord = False
             self.singleNote = noteList[0]  # singleNote is available as an alternative for scripting
@@ -300,14 +275,10 @@ class note:
         # print(self.notes)
 
     def print_mathematica(self):
+        """Print the mathematica code for a note
+        """
         try:
             print(f"SoundNote[{{{self.notes_string('"', '","', '"')}}}, {{{self.startSeconds}, {self.endSeconds}}}],")
-        except:
-            pass
-
-    def return_mathematica(self):
-        try:
-            return f"SoundNote[{{{self.notes_string('"', '","', '"')}}}, {{{self.startSeconds}, {self.endSeconds}}}]"
         except:
             pass
 
@@ -318,7 +289,7 @@ class note:
 
         return notes
 
-    def notes_string(self, startString = "", splitString = "", endString = ""):
+    def notes_string(self, startString: str = "", splitString: str = "", endString: str = ""):
         notes = "" + startString
         # print(self.notes)
         for count, i in enumerate(self.notes):
@@ -332,7 +303,7 @@ class note:
 
 
 # -------------- testing ------------------
-songTest = song("duet.musicxml")
+songTest = song("prologue.xml")
 
 # songTest = song("prologue.xml")
 # print(songTest.parts[0].getTotalBeats())
