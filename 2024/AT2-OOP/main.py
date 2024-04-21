@@ -1,7 +1,7 @@
 import xmltodict
 import json
 
-
+# lists for key signatures (a key sig with 1 sharp has a sharp on the F, etc)
 FIFTHS_SHARPS = ["B", "E", 'A', "D", "G", "C", "F"]
 FIFTHS_FLATS = ["F", "C", "G", "D", "A", "E", "B"]
 
@@ -12,7 +12,7 @@ SHARP = "Sharp"
 
 def getSongBPMPerBar(part):
     """A function to get the bpm of each bar of a song, because musicxml only stores
-    bpm changes on the first instrument... im gonna lose my sanity soon
+    bpm changes on the first instrument
 
     Args:
         part (dict): the instrument
