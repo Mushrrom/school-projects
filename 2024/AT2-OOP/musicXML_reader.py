@@ -1,5 +1,4 @@
 import xmltodict
-import json
 
 # lists for key signatures (a key sig with 1 sharp has a sharp on the F, etc)
 FIFTHS_SHARPS = ["B", "E", 'A', "D", "G", "C", "F"]
@@ -87,6 +86,7 @@ class song:
 
         # Get the tempo of the first bar (initial tempo of the piece)
         self.tempo = self.parts[0].part["measure"][0]["direction"]["sound"]["@tempo"]
+        self.totalBars = self.parts[0].getTotalBeats()
 
     def print_mathematica(self):
         for i in self.parts:
@@ -125,8 +125,6 @@ class part:
 
             self.bars.append(bar(i, bpm, currentBeat, currentTimeSeconds,
                                   key, sharps, self.divisions))
-
-
 
             currentTimeSeconds += secondsPerBeat * beatsInBar
             # print(currentTimeSeconds)
@@ -172,6 +170,7 @@ class bar:
             sharps (bool): whether the key sig is in sharps or flats
         """
         self.bar = bar
+        self.bpm = bpm
 
         secondsPerBeat = 60/bpm  # How many seconds each beat (quarter note) lasts for
         # print(f"!!!!!!!!!secondsPerBeat: {secondsPerBeat}")
@@ -301,11 +300,3 @@ class note:
         # print(notes)
         return notes
 
-
-# -------------- testing ------------------
-songTest = song("prologue.xml")
-
-# songTest = song("prologue.xml")
-# print(songTest.parts[0].getTotalBeats())
-songTest.print_mathematica()
-# print(print(json.dumps(songTest.parts[0].bars[23].bar, indent=4)))
