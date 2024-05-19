@@ -1,0 +1,140 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, white, #47acd7);
+    height: 100vh;
+}
+
+/* --- STYLES FOR THE HEADER --- */
+ul { /*make the list a good list*/
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #43c8da;
+    height: 56.5px;
+}
+
+li {
+    float: left;
+    justify-content: space-around;
+}
+
+li.image a { /*make the image behave like images should*/
+    display: flex;
+    flex: 1;
+    color: #000000;
+    text-align: center;
+    text-decoration: none;
+    background-color: #43c8da;
+    font-family: "lato", serif;
+    font-weight: 600;
+}
+
+img { /*make the image actually fit */
+    height: 56.5px;
+    width: 100%;
+}
+
+li.text a { /*make the text behave like text should*/
+    display: flex;
+    flex: 1;
+    color: #000000;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    background-color: #43c8da;
+    font-family: "lato", serif;
+    font-weight: 600;
+    font-size: x-large;
+}
+
+li a:hover { /*Change link bg on hover*/
+    background-color: #267b87;
+    color: white;
+}
+
+/* --- SEARCH THINGY --- */
+
+.search-container { /*make it fit */
+    height: 56.5px;
+    display: flex;
+    align-items: center;
+    margin-left: 0;
+}
+
+.search-container input[type="text"] { /*make the input look good*/
+    border: none;
+    border-radius: 15px;
+    padding: 5px 10px;
+    font-size: 16px;
+    outline: none;
+}
+
+.search-container .search-button { /*make the button you click to search look good*/
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 5px;
+}
+
+.search-container .search-button img {
+    width: 20px;
+    height: 20px;
+}
+
+
+/* --- LOGIN BOX --- */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+
+.login-box {
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 600px;
+}
+
+.input-container {
+    margin-bottom: 15px;
+}
+
+.input-container label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+.input-container input {
+    padding: 10px;
+    box-sizing: border-box;
+    border: 0px;
+    align-items: center;
+    background-color: #d9d9d9;
+    min-width: auto;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #43c8da;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #267b87;
+}

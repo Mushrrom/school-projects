@@ -7,17 +7,23 @@ from functions.generate_token import generate_token
 # This means that each letter stores 6 bytes (63 letters means that 111111 is !)
 create = Blueprint('create', __name__, template_folder='templates')
 
+users_db = get_database()["users"]
+schools_db = get_database()["users"]
+
+
 @create.route('/api/admin/create_account', methods=['POST'])
 def create_account():
     # print(request.json["username"])
     # Check if the request contains username and password
-    if not("username" in request.json and "password" in request.json and "school" in request.json):
+    if not("username" in request.json and "password" in request.json
+           and "school" in request.json and "school_secret" in request.json):
         return "err: need username and password and school  "
 
     # Get values from request
     user_username = request.json["username"]
     user_password = request.json["password"]
     user_school   = request.json["school"]
+
 
     # Password security
     if len(user_password) < 8:
@@ -28,7 +34,6 @@ def create_account():
     user_token = generate_token(user_uuid)
 
     # Get DB
-    users_db = get_database()["users"]
 
     # Check wether a user already exists with that username
     user = users_db.find_one({"school": request.json["school"],

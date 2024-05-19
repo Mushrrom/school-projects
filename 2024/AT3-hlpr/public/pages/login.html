@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>School Website</title>
+    <link rel="stylesheet" href="styles/login.css" />
+  </head>
+  <body>
+    <ul>
+      <li class="image"><a href="/"><img src="/assets/hlpr.png"></a></li>
+      <li class="text"><a href="/school">School</a></li>
+      <li class="text"><a href="/subjects">Subjects</a></li>
+      <li class="text"><a href="/questions">Questions</a></li>
+      <div class="search-container">
+        <li class="text">
+        <input type="text" placeholder="Search...">
+      </li>
+      <li class="text">
+        <button class="search-button">
+            <img src="assets/search.svg" alt="Search">
+        </button>
+      </li>
+      <li class="image"></li>
+      <a href="/profile" style="right: 0px;"><img src="/assets/user.svg"></a>
+
+    </div>
+    </ul>
+
+    <div class="login-container">
+      <div class="login-box">
+          <form>
+              <div class="input-container">
+                  <label for="username">Username</label>
+                  <input type="text" id="username" name="username" required>
+              </div>
+              <div class="input-container">
+                  <label for="password">Password</label>
+                  <input type="password" id="password" name="password" required>
+              </div>
+              <div class="input-container">
+                  <label for="school">School</label>
+                  <input type="text" id="school" name="school" required>
+              </div>
+              <button type="submit">Login</button>
+          </form>
+      </div>
+  </div>
+  </body>
+</html>
