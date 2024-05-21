@@ -49,8 +49,8 @@ def create_account():
             "stats": {
                 "responses": 0,
                 "asked": 0,
-                "points": 0,
-                "boost_points": 0
+                "boost_points": 0,
+                "score": 0
             },
             "question_ids": [],
             "response_ids": []}

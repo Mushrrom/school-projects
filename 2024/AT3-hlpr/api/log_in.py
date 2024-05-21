@@ -4,8 +4,6 @@ import uuid
 from functions.db import get_database
 from functions.generate_token import generate_token
 
-# This means that each letter stores 6 bytes (63 letters means that 111111 is !)
-ln = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_!"
 login = Blueprint('login', __name__, template_folder='templates')
 
 schools_db = get_database()["schools"]
@@ -28,7 +26,7 @@ def log_in():
         return {"success": 0, "error": "User not found"}
 
     if not user["password"] == request.json["password"]:
-        return {"success": 0, "error": "Incorrect password"}
+        return {"success": 0, "error": "Incorrect password. If you have forgotten your password please contact your school administrator"}
 
     user_uuid = uuid.UUID(user["uuid"])
     new_token = generate_token(user_uuid)
