@@ -8,7 +8,7 @@ from functions.generate_token import generate_token
 create = Blueprint('create', __name__, template_folder='templates')
 
 users_db = get_database()["users"]
-schools_db = get_database()["users"]
+schools_db = get_database()["schools"]
 
 
 @create.route('/api/admin/create_account', methods=['POST'])
@@ -16,14 +16,24 @@ def create_account():
     # print(request.json["username"])
     # Check if the request contains username and password
     if not("username" in request.json and "password" in request.json
-           and "school" in request.json and "school_secret" in request.json):
-        return "err: need username and password and school  "
+            and "school" in request.json and "school_secret" in request.json
+            and "subjects" in request.json):
+        return {"success" : 0, "error": "invalid request"}
 
     # Get values from request
     user_username = request.json["username"]
     user_password = request.json["password"]
     user_school   = request.json["school"]
+    user_subjects = request.json["subjects"]
+    school_secret = request.json["school_secret"]
 
+    school = schools_db.find_one({"school_name": user_school})
+
+    if not school:
+        return {"success" : 0, "error": "school does not exist"}
+
+    if not school["school_secret"] == school_secret:
+        return {"success": 0, "error": "invalid school secret"}
 
     # Password security
     if len(user_password) < 8:
@@ -32,8 +42,6 @@ def create_account():
     # Generate UUID and token of user
     user_uuid  = uuid.uuid4()
     user_token = generate_token(user_uuid)
-
-    # Get DB
 
     # Check wether a user already exists with that username
     user = users_db.find_one({"school": request.json["school"],

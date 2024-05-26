@@ -4,7 +4,7 @@ from functions.db import get_database
 
 # This means that each letter stores 6 bytes (63 letters means that 111111 is !)
 ln = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_!"
-app = Blueprint('register-subject', __name__, template_folder='templates')
+register_subject = Blueprint('register-subject', __name__, template_folder='templates')
 
 # TODO:
 # [ ] Fix
@@ -14,7 +14,7 @@ schools_db = get_database()["schools"]
 subjects_db = get_database()["subjects"]
 
 
-@app.route('/api/admin/register_subject', methods=['POST'])
+@register_subject.route('/api/admin/register_subject', methods=['POST'])
 def register_school():
     """Register a school
 
@@ -27,9 +27,11 @@ def register_school():
            and "subject_name" in request.json):
         return "invalid request"
 
-    school = schools_db.find_one({"name": request.json["school_name"]})
+    # Find school in db
+    school = schools_db.find_one({"school_name": request.json["school_name"]})
 
-    if not school: return {"success": 0, "error": "invalid school"}
+    if not school:  # if a school with that name doesnt exist
+        return {"success": 0, "error": "invalid school"}
 
     if not school["school_secret"] == request.json["school_secret"]:
         return {"success": 0, "error": "invalid secret"}
@@ -47,4 +49,4 @@ def register_school():
 
     subjects_db.insert_one(data)
 
-    return "success"
+    return {"success": 1}
