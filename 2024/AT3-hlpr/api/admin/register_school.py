@@ -14,12 +14,25 @@ schools_db = get_database()["schools"]
 
 @school.route('/api/admin/register_school', methods=['POST'])
 def register_school():
+    """POST: ADMIN route to register a school to the database
+
+    Request information
+    - admin_secret : the HLPR admin code - this ensures that only people working
+                     for HLPR can create schools (by default this is just set to "secret")
+    - school_name : the name of the school that is being registered
+    - school_secret : The secret code that school admins can use to take actions
+                      for the school
+
+    Response information
+    - success : Whether the operation completed successfully, will be 1 if it has
+    - error : If an error occured, this will have a description of what happened
+    """
     if not("admin_secret" in request.json and "school_name" in request.json and
            "school_secret" in request.json):
-        return "invalid request"
+        return {"success" : 0, "error" :"invalid request"}
 
     if not ADMIN_SECRET == request.json["admin_secret"]:
-        return "Invalid admin secret"
+        return {"success" : 0, "error" :"Invalid admin secret"}
 
     data = {"school_name": request.json["school_name"],
              "school_secret": request.json["school_secret"],
@@ -27,4 +40,4 @@ def register_school():
 
     schools_db.insert_one(data)
 
-    return "success"
+    return {"success": 1}

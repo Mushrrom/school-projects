@@ -13,7 +13,8 @@ def generate_token(userID: uuid.uuid4):
     # Convert bytes to base64
     unixTimeB64 = base64.urlsafe_b64encode(unixtimeBytes).decode("utf-8").strip('=')
 
-    # Random number within 64 bit integer limit
+    # Random number within 64 bit integer limit, then converted to 8 bytes and
+    # converted to base64
     randomN = int(random.randint(0, 18_446_744_073_709_551_616)).to_bytes(8)
     randomSafe = base64.urlsafe_b64encode(randomN).decode('utf-8').strip('=')
 

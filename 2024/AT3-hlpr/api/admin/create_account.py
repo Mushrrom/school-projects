@@ -13,6 +13,20 @@ schools_db = get_database()["schools"]
 
 @create.route('/api/admin/create_account', methods=['POST'])
 def create_account():
+    """POST: create an account (FOR SCHOOL ADMINS)
+    Request information
+    - username : The username to create for the user
+    - password : the password of the user
+    - school : The name of the school to register the user to
+    - school_secret : the admin secret of that school, this prevents random people
+                    from creating users
+    - subjects : The subjects that that user is taking
+
+    Response information
+    - success : Whether the operation completed successfully, will be 1 if it has
+    - error : If an error occured, this will have a description of what happened
+    - session_token : A session token to log into that user's account
+    """
     # print(request.json["username"])
     # Check if the request contains username and password
     if not("username" in request.json and "password" in request.json

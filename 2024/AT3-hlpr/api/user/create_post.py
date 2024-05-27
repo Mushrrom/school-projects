@@ -7,7 +7,7 @@ from functions.uuid_slug import slug2uuid
 create_post = Blueprint('create_post', __name__, template_folder='templates')
 
 ln = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_!"
-# schools_db = get_database()["schools"]
+
 users_db = get_database()["users"]
 posts_db = get_database()["posts"]
 schools_db = get_database()["schools"]
@@ -15,6 +15,20 @@ subjects_db = get_database()["subjects"]
 
 @create_post.route('/api/user/create_post', methods=['POST'])
 def create_new_post():
+    """POST: create a new post (for any user that is in that subject)
+
+    Request information
+    - token : the auth token of the user
+    - subject_name : the name of the subject to create the post under
+    - post_title : The title of the post (should be short)
+    - post_contents : the body of the post (longer part - describe problem here)
+
+    Response information
+    - success : Whether the operation completed successfully, will be 1 if it has
+    - error : If an error occured, this will have a description of what happened
+    - post_id : The ID of the created post, so that the user can immediatley see
+                their created post
+    """
     # Check request has all valid fields
     if not("token" in request.json and "subject_name" in request.json and
            "post_title" in request.json and "post_contents" in request.json):
@@ -45,6 +59,7 @@ def create_new_post():
 
     user_school = user["school"]
 
+    # The post id is just a 8 random characers
     post_id = "".join(random.choice(list(ln)) for _ in range(8))
 
     # Add the post to the db of posts

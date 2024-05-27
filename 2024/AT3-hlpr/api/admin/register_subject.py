@@ -16,12 +16,17 @@ subjects_db = get_database()["subjects"]
 
 @register_subject.route('/api/admin/register_subject', methods=['POST'])
 def register_school():
-    """Register a school
+    """POST: Register a subject (FOR SCHOOL ADMINS)
 
-    Out information
-    - The success element will be 0 if there was an error with setting the subject
-      and will be 1 if there was no error
-    - If there was an error the error field will return a string with what the error was
+    Request information
+    - school_name : The name of the school
+    - school_secret : the admin secret of that school, this prevents random people
+                    from registering subjects
+    - subject_name : The name of the subject to create
+
+    Response information
+    - success : Whether the operation completed successfully, will be 1 if it has
+    - error : If an error occured, this will have a description of what happened
     """
     if not("school_name" in request.json and "school_secret" in request.json
            and "subject_name" in request.json):

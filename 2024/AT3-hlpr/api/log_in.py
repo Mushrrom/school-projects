@@ -11,6 +11,18 @@ users_db = get_database()["users"]
 
 @login.route('/api/login', methods=['POST'])
 def log_in():
+    """POST: route to log in (for anyone)
+
+    Request information
+    - username : The username of the user
+    - password : the password of the user
+    - school : The school of the user
+
+    Response information
+    - success : Whether the operation completed successfully, will be 1 if it has
+    - error : If an error occured, this will have a description of what happened
+    - session_token : A session token to log into that user's account
+    """
     if not("username" in request.json and "password" in request.json and "school" in request.json):
         return {"success": 0, "error": "incorrect request"}
 
