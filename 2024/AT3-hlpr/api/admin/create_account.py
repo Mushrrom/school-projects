@@ -51,7 +51,7 @@ def create_account():
 
     # Password security
     if len(user_password) < 8:
-        return "insecure password"
+        return {"success": 0, "error": "insecure password"}
 
     # Generate UUID and token of user
     user_uuid  = uuid.uuid4()
@@ -61,7 +61,7 @@ def create_account():
     user = users_db.find_one({"school": request.json["school"],
                               "username": request.json["username"]})
     if user:
-        return "user already exists. Choose different username"
+        return {"success": 0, "error": "user already exists. Choose different username"}
 
     data = {"username": user_username,
             "password": user_password,
